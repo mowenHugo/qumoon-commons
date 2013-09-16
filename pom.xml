@@ -18,16 +18,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.trilemon.top</groupId>
-    <artifactId>commons</artifactId>
+    <groupId>com.trilemon.commons</groupId>
+    <artifactId>trilemon-commons-root</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Trilemon-TOP-Commons-root</name>
+    <packaging>pom</packaging>
+
     <modules>
         <module>parent</module>
         <module>commons</module>
     </modules>
-
-    <name>Trilemon-TOP-Commons</name>
-    <packaging>pom</packaging>
 
     <description>Trilemon-TOP-Commons</description>
     <url>https://github.com/KevinGu/Trilemon-TOP-Commons</url>

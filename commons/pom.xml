@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>parent</artifactId>
+        <artifactId>trilemon-commons-parent</artifactId>
         <groupId>com.trilemon.commons</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
-    <groupId>com.trilemon</groupId>
-    <artifactId>commons</artifactId>
+    <groupId>com.trilemon.commons</groupId>
+    <artifactId>trilemon-commons</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>Trilemon-TOP-Commons</name>
 
     <!-- 依赖项定义 -->
@@ -325,10 +325,6 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>sitemesh</artifactId>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
