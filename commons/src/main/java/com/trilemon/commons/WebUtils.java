@@ -7,10 +7,14 @@ import com.google.common.io.Closeables;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -30,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author kevin
  */
 public class WebUtils {
+    public static final String USER_AGENT_1 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65 Safari/537.36";
     private static Logger logger = LoggerFactory.getLogger(WebUtils.class);
 
     public static Map<String, String> getQueryParameterPair(String url) throws MalformedURLException, UnsupportedEncodingException {
@@ -115,26 +120,146 @@ public class WebUtils {
      * @param sourceFile 压缩文件。
      * @param desDir     目标目录
      * @return 解压缩出来的的 {@link java.io.File}
-     * @throws net.lingala.zip4j.exception.ZipException 解压缩错误抛出异常
+     * @throws ZipException 解压缩错误抛出异常
      */
     public static File[] unzip(String sourceFile, String desDir)
             throws ZipException {
         return unzip(sourceFile, desDir, null);
     }
 
-    public static String getContent(final String url) throws IOException {
+    public static Header[] getHttpHead(HttpResponse httpResponse) throws Exception {
+        return httpResponse.getAllHeaders();
+    }
+
+    public static Header[] getHttpHead(final String url) throws Exception {
+        return getHttpHead(url, null);
+    }
+
+    public static Header[] getHttpHeadViaProxy(final String url, final String ip, int port,
+                                               String schema) throws Exception {
+        HttpHost httpHost = new HttpHost(ip, port, schema);
+        return getHttpHead(url, httpHost);
+    }
+
+    public static Header[] getHttpHead(final String url, final HttpHost httpHost) throws Exception {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(url);
+        HttpHead httpHead = new HttpHead(url);
         HttpParams params = new BasicHttpParams();
-        params.setParameter("http.socket.timeout", 10000);
-        params.setParameter("http.connection.timeout", 10000);
-        httpGet.setParams(params);
-        HttpResponse response = httpclient.execute(httpGet);
+        params.setParameter("http.socket.timeout", 8000);
+        params.setParameter("http.connection.timeout", 8000);
+        if (null != httpHost) {
+            params.setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+        }
+        httpHead.setParams(params);
+        httpHead.setHeader("User-Agent", USER_AGENT_1);
+        return httpclient.execute(httpHead).getAllHeaders();
+    }
+
+    public static Header[] getHttpHead(final String url, int retry) throws Exception {
+        int count = 0;
+        while (true) {
+            try {
+                return getHttpHead(url);
+            } catch (Exception e) {
+                count++;
+                if (count > retry) {
+                    throw e;
+                } else {
+                    logger.info("retry[{}/{}] get http headers of url[{}]", count, retry, url);
+                }
+            }
+        }
+    }
+
+    public static String getHttpBody(final String url) throws Exception {
+        HttpResponse response = getHttpResponse(url);
         HttpEntity entity = response.getEntity();
         return EntityUtils.toString(entity);
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(getContent("http://fuwu.taobao.com/serv/rencSubscList.do?serviceCode=ts-11496&currentPage="));
+    public static String getHttpBodyViaProxy(final String url, final String ip, int port,
+                                             String schema) throws Exception {
+        HttpResponse response = getHttpResponseViaProxy(url, ip, port, schema);
+        HttpEntity entity = response.getEntity();
+        return EntityUtils.toString(entity);
+    }
+
+    public static String getHttpBody(HttpResponse httpResponse) throws Exception {
+        HttpEntity entity = httpResponse.getEntity();
+        return EntityUtils.toString(entity);
+    }
+
+    public static String getHttpBody(final String url, int retry) throws Exception {
+        int count = 0;
+        while (true) {
+            try {
+                return getHttpBody(url);
+            } catch (Exception e) {
+                count++;
+                if (count > retry) {
+                    throw e;
+                } else {
+                    logger.info("retry[{}/{}] get http body of url[{}]", count, retry, url);
+                }
+            }
+        }
+    }
+
+    public static HttpResponse getHttpResponseViaProxy(final String url, final String ip, int port,
+                                                       String schema) throws Exception {
+        HttpHost httpHost = new HttpHost(ip, port, schema);
+        return getHttpResponse(url, httpHost);
+    }
+
+    public static HttpResponse getHttpResponse(final String url, int retry) throws Exception {
+        int count = 0;
+        while (true) {
+            try {
+                return getHttpResponse(url);
+            } catch (Exception e) {
+                count++;
+                if (count > retry) {
+                    throw e;
+                } else {
+                    logger.info("retry[{}/{}] get http response of url[{}]", count, retry, url);
+                }
+            }
+        }
+    }
+
+    public static HttpResponse getHttpResponse(final String url) throws Exception {
+        return getHttpResponse(url, null);
+    }
+
+    public static HttpResponse getHttpResponse(final String url, final HttpHost httpHost) throws Exception {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url);
+        HttpParams params = new BasicHttpParams();
+        params.setParameter("http.socket.timeout", 8000);
+        params.setParameter("http.connection.timeout", 8000);
+        if (null != httpHost) {
+            params.setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
+        }
+        httpGet.setParams(params);
+        httpGet.setHeader("User-Agent", USER_AGENT_1);
+        return httpclient.execute(httpGet);
+    }
+
+    public static String getHttpBodyViaProxy(final String url, int retry, final String ip, int port,
+                                             String type) throws Exception {
+        int count = 0;
+        while (true) {
+            try {
+                return getHttpBodyViaProxy(url, ip, port, type);
+            } catch (Exception e) {
+                count++;
+                if (count > retry) {
+                    throw e;
+                } else {
+                    logger.info("retry[{}/{}] get http body via proxy {} of url[{}]", count, retry,
+                            "<" + type + ">" + ip + ":" + port, url);
+                }
+            }
+        }
     }
 }

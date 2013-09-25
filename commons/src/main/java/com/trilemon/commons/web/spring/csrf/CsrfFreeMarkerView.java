@@ -21,28 +21,26 @@ public class CsrfFreeMarkerView extends FreeMarkerView {
 
     protected SimpleHash buildTemplateModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
         SimpleHash fmModel = super.buildTemplateModel(model, request, response);
-        if (request.getMethod().equalsIgnoreCase("POST")) {
-            Object csrfTokenManagerObj = getApplicationContext().getBean("csrfTokenManager");
-            if (null != csrfTokenManagerObj && csrfTokenManagerObj instanceof CsrfTokenManager) {
-                csrfTokenManager = (CsrfTokenManager) csrfTokenManagerObj;
-            } else {
-                logger.error("can not init CsrfTokenManager");
-            }
-            try {
-                TemplateModel application = fmModel.get(FreemarkerServlet.KEY_APPLICATION);
-                if (application instanceof ServletContextHashModel) {
-                    Object reqObj = model.get("requestContext");
-                    if (null != reqObj && reqObj instanceof RequestContext) {
-                        RequestContext requestContext = (RequestContext) reqObj;
-                        RequestDataValueProcessor processor = requestContext.getRequestDataValueProcessor();
-                        if (processor != null) {
-                            fmModel.put("csrfKey", CsrfTokenManager.CSRF_PARAM_NAME);
-                            fmModel.put("csrfValue", csrfTokenManager.getTokenInSession(request.getRequestedSessionId()));
-                        }
+        Object csrfTokenManagerObj = getApplicationContext().getBean("csrfTokenManager");
+        if (null != csrfTokenManagerObj && csrfTokenManagerObj instanceof CsrfTokenManager) {
+            csrfTokenManager = (CsrfTokenManager) csrfTokenManagerObj;
+        } else {
+            logger.error("can not init CsrfTokenManager");
+        }
+        try {
+            TemplateModel application = fmModel.get(FreemarkerServlet.KEY_APPLICATION);
+            if (application instanceof ServletContextHashModel) {
+                Object reqObj = model.get("requestContext");
+                if (null != reqObj && reqObj instanceof RequestContext) {
+                    RequestContext requestContext = (RequestContext) reqObj;
+                    RequestDataValueProcessor processor = requestContext.getRequestDataValueProcessor();
+                    if (processor != null) {
+                        fmModel.put("csrfKey", CsrfTokenManager.CSRF_PARAM_NAME);
+                        fmModel.put("csrfValue", csrfTokenManager.getTokenInSession(request.getRequestedSessionId()));
                     }
                 }
-            } catch (TemplateModelException e) {
             }
+        } catch (TemplateModelException e) {
         }
         return fmModel;
     }

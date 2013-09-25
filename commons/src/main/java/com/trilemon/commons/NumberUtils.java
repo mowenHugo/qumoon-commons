@@ -23,10 +23,10 @@ public class NumberUtils {
         if (null != numberStr) {
             if (null != unit) {
                 if ("万".equals(unit)) {
-                    return numberFormat.parse(numberStr).intValue() * 10000;
+                    return (int)(numberFormat.parse(numberStr).doubleValue() * 10000);
                 }
             }
-            return numberFormat.parse(numberStr).intValue();
+            return (int)(numberFormat.parse(numberStr).doubleValue());
         }
         return 0;
     }
@@ -36,6 +36,6 @@ public class NumberUtils {
     }
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(numberFormat.parse("高于16.09%").doubleValue());
+        System.out.println(NumberUtils.parseInt("19.9万人"));
     }
 }

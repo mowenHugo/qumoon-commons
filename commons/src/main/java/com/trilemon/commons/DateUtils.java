@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class DateUtils {
     public static final String yyyyMMdd2 = "yyyy-MM-dd";
+    public static final String yyyyMMdd3 = "yyyy/MM/dd";
     public static final String yyyyMMdd = "yyyyMMdd";
     public static final String MMdd = "MM-dd";
     public static final String yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd HH:mm:ss";
@@ -21,6 +22,14 @@ public class DateUtils {
 
     public static String format(Date date, String formatter) {
         return new DateTime(date.getTime()).toString(formatter);
+    }
+
+    public static Date startOf(Date day) {
+        return new DateTime(day).withTimeAtStartOfDay().toDate();
+    }
+
+    public static Date endOf(Date day) {
+        return new DateTime(day).millisOfDay().withMaximumValue().toDate();
     }
 
     public static DateTime startOfYesterday() {

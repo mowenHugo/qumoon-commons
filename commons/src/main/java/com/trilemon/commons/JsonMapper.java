@@ -51,6 +51,10 @@ public class JsonMapper {
         return new JsonMapper(JsonInclude.Include.NON_DEFAULT);
     }
 
+    public static String normalizeJson(String json) {
+        return json.replace("\\", "\\\\");
+    }
+
     /**
      * Object可以是POJO，也可以是Collection或数组。 如果对象为Null, 返回"null". 如果集合为空集合, 返回"[]".
      */
@@ -71,7 +75,7 @@ public class JsonMapper {
      * <p/>
      * 如需反序列化复杂Collection如List<MyBean>, 请使用fromJson(String, JavaType)
      *
-     * @see #fromJson(String, com.fasterxml.jackson.databind.JavaType)
+     * @see #fromJson(String, JavaType)
      */
     public <T> T fromJson(String jsonString, Class<T> clazz) {
         if (StringUtils.isEmpty(jsonString)) {
@@ -86,22 +90,12 @@ public class JsonMapper {
         }
     }
 
-    public Map<?,?> fromJson2Map(String jsonString) {
-        if (StringUtils.isEmpty(jsonString)) {
-            return null;
-        }
-
-        try {
-            return mapper.readValue(jsonString, Map.class);
-        } catch (IOException e) {
-            logger.warn("parse json string error:" + jsonString, e);
-            return null;
-        }
+    public Map<?, ?> fromJson2Map(String jsonString) throws Exception {
+        return mapper.readValue(jsonString, Map.class);
     }
 
     /**
      * 反序列化复杂Collection如List<Bean>, 先使用createCollectionType()或contructMapType()构造类型, 然后调用本函数.
-     *
      */
     public <T> T fromJson(String jsonString, JavaType javaType) {
         if (StringUtils.isEmpty(jsonString)) {
@@ -171,9 +165,5 @@ public class JsonMapper {
      */
     public ObjectMapper getMapper() {
         return mapper;
-    }
-
-    public static String normalizeJson(String json) {
-        return json.replace("\\", "\\\\");
     }
 }

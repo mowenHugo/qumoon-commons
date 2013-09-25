@@ -13,7 +13,7 @@ import static com.trilemon.commons.BasicConstant.EMPTY_STRING_ARRAY;
 
 /**
  * A <code>RequestDataValueProcessor</code> that pushes a hidden field with a CSRF token into forms. This process
- * implements the {@link #getExtraHiddenFields(javax.servlet.http.HttpServletRequest)} method to push the CSRF token obtained from {@link
+ * implements the {@link #getExtraHiddenFields(HttpServletRequest)} method to push the CSRF token obtained from {@link
  * CsrfTokenManager}. To register this processor to automatically process all Spring based forms register it as a Spring
  * bean named 'requestDataValueProcessor' as shown below:
  * <pre>
