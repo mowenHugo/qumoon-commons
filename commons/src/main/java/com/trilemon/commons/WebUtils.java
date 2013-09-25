@@ -145,8 +145,8 @@ public class WebUtils {
         HttpClient httpclient = new DefaultHttpClient();
         HttpHead httpHead = new HttpHead(url);
         HttpParams params = new BasicHttpParams();
-        params.setParameter("http.socket.timeout", 8000);
-        params.setParameter("http.connection.timeout", 8000);
+        params.setParameter("http.socket.timeout", 10000);
+        params.setParameter("http.connection.timeout", 10000);
         if (null != httpHost) {
             params.setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
         }
@@ -235,8 +235,8 @@ public class WebUtils {
         HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
         HttpParams params = new BasicHttpParams();
-        params.setParameter("http.socket.timeout", 8000);
-        params.setParameter("http.connection.timeout", 8000);
+        params.setParameter("http.socket.timeout", 10000);
+        params.setParameter("http.connection.timeout", 10000);
         if (null != httpHost) {
             params.setParameter(ConnRoutePNames.DEFAULT_PROXY, httpHost);
         }
