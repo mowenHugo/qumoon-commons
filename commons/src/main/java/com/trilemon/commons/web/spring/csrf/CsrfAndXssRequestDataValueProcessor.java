@@ -62,8 +62,8 @@ public class CsrfAndXssRequestDataValueProcessor implements RequestDataValueProc
     public Map<String, String> getExtraHiddenFields(HttpServletRequest request) {
         if (request.getMethod().equalsIgnoreCase("POST")) {
             Map<String, String> hiddenFields = Maps.newHashMap();
-            hiddenFields.put(CsrfTokenManager.CSRF_PARAM_NAME, csrfTokenManager.getTokenInSession(request
-                    .getRequestedSessionId()));
+            hiddenFields.put(CsrfTokenManager.CSRF_PARAM_NAME, csrfTokenManager.getTokenInSession(request.getSession
+                    ().getId()));
             return hiddenFields;
         }
         return null;
