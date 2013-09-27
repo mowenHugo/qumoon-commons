@@ -35,6 +35,7 @@ public class CsrfFreeMarkerView extends FreeMarkerView {
                     RequestContext requestContext = (RequestContext) reqObj;
                     RequestDataValueProcessor processor = requestContext.getRequestDataValueProcessor();
                     if (processor != null) {
+                        request.getSession();//create session if not exist
                         fmModel.put("csrfKey", CsrfTokenManager.CSRF_PARAM_NAME);
                         fmModel.put("csrfValue", csrfTokenManager.getTokenInSession(request.getRequestedSessionId()));
                     }
