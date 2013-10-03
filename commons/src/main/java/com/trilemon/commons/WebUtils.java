@@ -1,6 +1,7 @@
 package com.trilemon.commons;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -24,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -261,5 +262,34 @@ public class WebUtils {
                 }
             }
         }
+    }
+
+    public static String getExternalIp() throws Exception {
+        return getHttpBody("http://checkip.amazonaws.com");
+
+    }
+
+    public static List<String> getInternalIps() throws SocketException {
+        List<String> ipList = Lists.newArrayList();
+        for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces(); networkInterfaces.hasMoreElements(); ) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            if (networkInterface.isUp() && !networkInterface.isLoopback())
+                for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (inetAddress instanceof Inet4Address) {
+                        ipList.add(inetAddress.getHostAddress());
+                    }
+                }
+        }
+        return ipList;
+    }
+
+    public static String get192Ip() throws SocketException {
+        for (String ip : getInternalIps()) {
+            if (ip.startsWith("192")) {
+                return ip;
+            }
+        }
+        return null;
     }
 }

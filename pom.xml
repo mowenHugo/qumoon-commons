@@ -21,7 +21,6 @@
     <groupId>com.trilemon.commons</groupId>
     <artifactId>trilemon-commons-root</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Trilemon-TOP-Commons-root</name>
     <packaging>pom</packaging>
 
     <modules>
