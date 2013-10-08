@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -126,6 +127,11 @@ public class WebUtils {
     public static File[] unzip(String sourceFile, String desDir)
             throws ZipException {
         return unzip(sourceFile, desDir, null);
+    }
+
+    public static File[] unzip2TempDir(String sourceFile)
+            throws ZipException {
+        return unzip(sourceFile, Files.createTempDir().getAbsolutePath(), null);
     }
 
     public static Header[] getHttpHead(HttpResponse httpResponse) throws Exception {
