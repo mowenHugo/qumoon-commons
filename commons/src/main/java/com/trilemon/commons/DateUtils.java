@@ -51,7 +51,7 @@ public class DateUtils {
         return DateTime.now().minusDays(n).secondOfDay().withMaximumValue();
     }
 
-    public static List<Interval> splitByDay(DateTime startTime, DateTime endTime, int days) {
+    public static List<Interval> partitionByDay(DateTime startTime, DateTime endTime, int days) {
         int range = endTime.getDayOfYear() - startTime.getDayOfYear();
         List<Interval> checkTimeRanges = Lists.newArrayList();
         if (startTime.getDayOfYear() == endTime.getDayOfYear()) {
@@ -66,7 +66,7 @@ public class DateUtils {
         return checkTimeRanges;
     }
 
-    public static List<Interval> splitByMinute(DateTime startTime, DateTime endTime, int minutes) {
+    public static List<Interval> partitionByMinute(DateTime startTime, DateTime endTime, int minutes) {
         List<Interval> chunks = Lists.newArrayList();
         DateTime nextChunkStartTime;
         while (true) {
