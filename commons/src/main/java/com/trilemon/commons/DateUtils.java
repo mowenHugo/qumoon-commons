@@ -1,9 +1,12 @@
 package com.trilemon.commons;
 
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author kevin
@@ -46,5 +49,36 @@ public class DateUtils {
 
     public static DateTime endOfNDaysBefore(int n) {
         return DateTime.now().minusDays(n).secondOfDay().withMaximumValue();
+    }
+
+    public static List<Interval> splitByDay(DateTime startTime, DateTime endTime, int days) {
+        int range = endTime.getDayOfYear() - startTime.getDayOfYear();
+        List<Interval> checkTimeRanges = Lists.newArrayList();
+        if (startTime.getDayOfYear() == endTime.getDayOfYear()) {
+            checkTimeRanges.add(new Interval(startTime, endTime));
+        } else {
+            for (; range > 0; range--) {
+                checkTimeRanges.add(new Interval(startTime, startTime.secondOfDay().withMaximumValue()));
+                startTime = startTime.plusDays(days).secondOfDay().withMinimumValue();
+            }
+            checkTimeRanges.add(new Interval(startTime, endTime));
+        }
+        return checkTimeRanges;
+    }
+
+    public static List<Interval> splitByMinute(DateTime startTime, DateTime endTime, int minutes) {
+        List<Interval> chunks = Lists.newArrayList();
+        DateTime nextChunkStartTime;
+        while (true) {
+            nextChunkStartTime = startTime.plusMinutes(minutes);
+            if (nextChunkStartTime.isBefore(endTime)) {
+                chunks.add(new Interval(startTime, nextChunkStartTime));
+                startTime = nextChunkStartTime.plusSeconds(1);
+            } else {
+                chunks.add(new Interval(startTime, endTime));
+                break;
+            }
+        }
+        return chunks;
     }
 }
