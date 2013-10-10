@@ -46,6 +46,11 @@
     <!-- 预定义依赖项的version,scope与exclusions,子项目中只需定义groupId 和 artifactId 即可 -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
             <!-- SPRING basic begin(一般不需要显式定义) -->
             <dependency>
                 <groupId>org.springframework</groupId>
