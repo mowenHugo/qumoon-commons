@@ -1,4 +1,4 @@
-package com.trilemon.commons.web;
+package com.trilemon.commons.web.session;
 
 import net.spy.memcached.MemcachedClient;
 

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author kevin
  */
-public class BasicConstant {
+public class CommonConstant {
     // =============================================================
     //  数组常量
     // =============================================================

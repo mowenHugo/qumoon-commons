@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.trilemon.commons.BasicConstant.EMPTY_STRING;
+import static com.trilemon.commons.CommonConstant.EMPTY_STRING;
 
 /**
  * @author kevin

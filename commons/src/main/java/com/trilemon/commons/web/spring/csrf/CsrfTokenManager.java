@@ -3,7 +3,7 @@ package com.trilemon.commons.web.spring.csrf;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.trilemon.commons.web.HttpSessionStore;
+import com.trilemon.commons.web.session.HttpSessionStore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;

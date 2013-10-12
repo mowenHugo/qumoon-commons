@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 
-import static com.trilemon.commons.BasicConstant.EMPTY_STRING_ARRAY;
+import static com.trilemon.commons.CommonConstant.EMPTY_STRING_ARRAY;
 
 /**
  * A <code>RequestDataValueProcessor</code> that pushes a hidden field with a CSRF token into forms. This process
