@@ -18,7 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.trilemon.commons</groupId>
+    <groupId>com.trilemon</groupId>
     <artifactId>trilemon-commons-root</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -28,8 +28,8 @@
         <module>commons</module>
     </modules>
 
-    <description>Trilemon-TOP-Commons</description>
-    <url>https://github.com/KevinGu/Trilemon-TOP-Commons</url>
+    <description>Trilemon-Commons</description>
+    <url>https://github.com/KevinGu/Trilemon-Commons</url>
     <inceptionYear>2013</inceptionYear>
     <organization>
         <name>trilemon</name>
@@ -43,7 +43,7 @@
             <email>guyan.data@gmail.com</email>
             <organization>trilemon</organization>
             <roles>
-                <role>dev</role>
+                <role>admin</role>
             </roles>
             <timezone>+8</timezone>
         </developer>
@@ -51,6 +51,6 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/KevinGu/Trilemon-TOP-Commons/issues</url>
+        <url>https://github.com/KevinGu/Trilemon-Commons/issues</url>
     </issueManagement>
 </project>

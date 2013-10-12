@@ -8,6 +8,7 @@
         <groupId>com.trilemon</groupId>
         <artifactId>trilemon-commons-deps</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../deps</relativePath>
     </parent>
 
     <artifactId>trilemon-commons</artifactId>
