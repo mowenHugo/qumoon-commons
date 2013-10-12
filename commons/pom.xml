@@ -5,10 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>trilemon-commons-parent</artifactId>
-        <groupId>com.trilemon.commons</groupId>
+        <groupId>com.trilemon</groupId>
+        <artifactId>trilemon-commons-deps</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
     </parent>
 
     <artifactId>trilemon-commons</artifactId>

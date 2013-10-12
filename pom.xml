@@ -24,7 +24,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>parent</module>
+        <module>deps</module>
         <module>commons</module>
     </modules>
 
