@@ -7,12 +7,12 @@ import org.joda.time.LocalTime;
 /**
  * @author kevin
  */
-public class TimeInterval {
+public class LocalTimeInterval {
     private static final Instant CONSTANT = new Instant(0);
     private final LocalTime from;
     private final LocalTime to;
 
-    public TimeInterval(LocalTime from, LocalTime to) {
+    public LocalTimeInterval(LocalTime from, LocalTime to) {
         this.from = from;
         this.to = to;
     }
@@ -25,8 +25,8 @@ public class TimeInterval {
         }
     }
 
-    public boolean overlapsWith(TimeInterval timeInterval) {
-        return this.toInterval().overlaps(timeInterval.toInterval());
+    public boolean overlapsWith(LocalTimeInterval localTimeInterval) {
+        return this.toInterval().overlaps(localTimeInterval.toInterval());
     }
 
     /**
