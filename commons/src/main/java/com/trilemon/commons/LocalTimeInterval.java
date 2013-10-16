@@ -1,5 +1,6 @@
 package com.trilemon.commons;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.LocalTime;
@@ -15,6 +16,10 @@ public class LocalTimeInterval {
     public LocalTimeInterval(LocalTime from, LocalTime to) {
         this.from = from;
         this.to = to;
+    }
+
+    public LocalTimeInterval(int fromHour, int toHour) {
+        this(new LocalTime(fromHour, 0), new LocalTime(toHour, 0));
     }
 
     public boolean isValid() {
@@ -43,5 +48,9 @@ public class LocalTimeInterval {
 
     public LocalTime getTo() {
         return to;
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
