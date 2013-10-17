@@ -9,16 +9,16 @@ import java.util.List;
  */
 public class Page<T> {
     private int totalSize = 0;
-    private int size = 1;
+    private int pageSize = 1;
     private int pageNum = 1;
     private List<T> items = Lists.newArrayList();
 
     private Page() {
     }
 
-    public Page(int totalSize, int pageNum, int size, List<T> items) {
+    private Page(int totalSize, int pageNum, int pageSize, List<T> items) {
         this.totalSize = totalSize;
-        this.size = size;
+        this.pageSize = pageSize;
         this.pageNum = pageNum;
         this.items = items;
     }
@@ -27,11 +27,8 @@ public class Page<T> {
         return new Page<T>();
     }
 
-    public static void main(String[] args) {
-        Page<String> page = Page.empty();
-        page.setSize(2);
-        page.setTotalSize(10);
-        System.out.print(page.getPages());
+    public static <T> Page<T> create(int totalSize, int pageNum, int pageSize, List<T> items) {
+        return new Page(totalSize, pageNum, pageSize, items);
     }
 
     public int getTotalSize() {
@@ -42,12 +39,12 @@ public class Page<T> {
         this.totalSize = totalSize;
     }
 
-    public int getSize() {
-        return size;
+    public int getPageSize() {
+        return pageSize;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 
     public int getPageNum() {
@@ -67,11 +64,11 @@ public class Page<T> {
     }
 
     public int getPages() {
-        int totalPages = totalSize / size;
+        int totalPages = totalSize / pageSize;
         if (totalPages <= 1) {
             return 1;
         } else {
-            return totalPages + (totalSize % size > 0 ? 1 : 0);
+            return totalPages + (totalSize % pageSize > 0 ? 1 : 0);
         }
     }
 
