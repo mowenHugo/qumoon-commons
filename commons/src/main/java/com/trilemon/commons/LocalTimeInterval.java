@@ -1,5 +1,6 @@
 package com.trilemon.commons;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
@@ -52,5 +53,22 @@ public class LocalTimeInterval {
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof LocalTimeInterval) {
+            LocalTimeInterval other = (LocalTimeInterval) obj;
+            if (this.from.equals(other.getFrom()) && this.to.equals(other.getTo())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }
