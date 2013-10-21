@@ -4,6 +4,9 @@ package com.trilemon.commons;
  * @author kevin
  */
 
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -48,5 +51,10 @@ public class Exceptions {
             cause = cause.getCause();
         }
         return false;
+    }
+
+    public static <EX extends Exception> void logAndThrow(Logger logger, EX ex) throws EX {
+        logger.error(Throwables.getStackTraceAsString(ex));
+        throw ex;
     }
 }
