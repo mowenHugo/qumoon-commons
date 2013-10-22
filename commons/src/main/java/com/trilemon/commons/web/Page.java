@@ -1,7 +1,9 @@
 package com.trilemon.commons.web;
 
 import com.google.common.collect.Lists;
+import com.google.common.math.IntMath;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -64,12 +66,7 @@ public class Page<T> {
     }
 
     public int getPages() {
-        int totalPages = totalSize / pageSize;
-        if (totalPages <= 1) {
-            return 1;
-        } else {
-            return totalPages + (totalSize % pageSize > 0 ? 1 : 0);
-        }
+        return IntMath.divide(totalSize,pageSize, RoundingMode.CEILING);
     }
 
     public boolean hasFirstPage() {
