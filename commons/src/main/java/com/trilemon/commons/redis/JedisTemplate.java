@@ -7,9 +7,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.util.Set;
+
 /**
- * JedisTemplate 提供了一个template方法，负责对Jedis连接的获取与归还。
- * JedisAction<T> 和 JedisActionNoResult两种回调接口，适用于有无返回值两种情况。
+ * JedisTemplate 提供了一个template方法，负责对Jedis连接的获取与归还。 JedisAction<T> 和 JedisActionNoResult两种回调接口，适用于有无返回值两种情况。
  * 同时提供一些最常用函数的封装, 如get/set/zadd等。
  */
 public class JedisTemplate {
@@ -82,6 +83,25 @@ public class JedisTemplate {
         return jedisPool;
     }
 
+    public Set<String> keys(final String keyPattern) {
+        return execute(new JedisAction<Set<String>>() {
+
+            @Override
+            public Set<String> action(Jedis jedis) {
+                return jedis.keys(keyPattern);
+            }
+        });
+    }
+    public Set<byte[]> keys(final byte[] keyPattern) {
+        return execute(new JedisAction<Set<byte[]>>() {
+
+            @Override
+            public Set<byte[]> action(Jedis jedis) {
+                return jedis.keys(keyPattern);
+            }
+        });
+    }
+
     /**
      * 有返回结果的回调接口定义。
      */
@@ -103,6 +123,16 @@ public class JedisTemplate {
      * 删除key, 如果key存在返回true, 否则返回false。
      */
     public boolean del(final String key) {
+        return execute(new JedisAction<Boolean>() {
+
+            @Override
+            public Boolean action(Jedis jedis) {
+                return jedis.del(key) == 1 ? true : false;
+            }
+        });
+    }
+
+    public boolean del(final byte[] key) {
         return execute(new JedisAction<Boolean>() {
 
             @Override
@@ -135,6 +165,15 @@ public class JedisTemplate {
             }
         });
     }
+    public byte[] get(final byte[] key) {
+        return execute(new JedisAction<byte[]>() {
+
+            @Override
+            public byte[] action(Jedis jedis) {
+                return jedis.get(key);
+            }
+        });
+    }
 
     /**
      * 如果key不存在, 返回0.
@@ -162,7 +201,27 @@ public class JedisTemplate {
         });
     }
 
+    public void set(final byte[] key, final byte[] value) {
+        execute(new JedisActionNoResult() {
+
+            @Override
+            public void action(Jedis jedis) {
+                jedis.set(key, value);
+            }
+        });
+    }
+
     public void setex(final String key, final String value, final int seconds) {
+        execute(new JedisActionNoResult() {
+
+            @Override
+            public void action(Jedis jedis) {
+                jedis.setex(key, seconds, value);
+            }
+        });
+    }
+
+    public void setex(final byte[] key, final byte[] value, final int seconds) {
         execute(new JedisActionNoResult() {
 
             @Override
@@ -176,6 +235,16 @@ public class JedisTemplate {
      * 如果key还不存在则进行设置，返回true，否则返回false.
      */
     public boolean setnx(final String key, final String value) {
+        return execute(new JedisAction<Boolean>() {
+
+            @Override
+            public Boolean action(Jedis jedis) {
+                return jedis.setnx(key, value) == 1 ? true : false;
+            }
+        });
+    }
+
+    public boolean setnx(final byte[] key, final byte[] value) {
         return execute(new JedisAction<Boolean>() {
 
             @Override

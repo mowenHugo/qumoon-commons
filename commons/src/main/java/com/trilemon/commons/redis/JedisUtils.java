@@ -4,13 +4,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
-/**
- * @author kevin
- */
 public class JedisUtils {
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = Protocol.DEFAULT_PORT;
     public static final int DEFAULT_TIMEOUT = Protocol.DEFAULT_TIMEOUT;
+
     private static final String OK_CODE = "OK";
     private static final String OK_MULTI_CODE = "+OK";
 

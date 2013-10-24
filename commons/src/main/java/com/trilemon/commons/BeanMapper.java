@@ -44,10 +44,6 @@ public class BeanMapper {
      */
     private static DozerBeanMapper dozer = new DozerBeanMapper();
 
-    static {
-        dozer.setMappingFiles(Lists.newArrayList("dozer/dozer_Map_to_TopSession.xml"));
-    }
-
     /**
      * 基于Dozer转换对象的类型.
      */
