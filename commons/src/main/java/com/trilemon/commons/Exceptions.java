@@ -57,4 +57,8 @@ public class Exceptions {
         logger.error(Throwables.getStackTraceAsString(ex));
         throw ex;
     }
+    public static <EX extends Exception> void logAndThrow(Logger logger, String extraMsg, EX ex) throws EX {
+        logger.error("msg[{}] ex[{}]", extraMsg, Throwables.getStackTraceAsString(ex));
+        throw ex;
+    }
 }
