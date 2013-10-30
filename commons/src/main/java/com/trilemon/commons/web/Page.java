@@ -13,7 +13,7 @@ import java.util.List;
 public class Page<T> {
     private int totalSize = 0;
     private int pageSize = 1;
-    private int pageNum = 1;
+    private int pageNum = 0;
     private List<T> items = Lists.newArrayList();
 
     private Page() {
