@@ -2,6 +2,7 @@ package com.trilemon.commons.web;
 
 import com.google.common.collect.Lists;
 import com.google.common.math.IntMath;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.math.RoundingMode;
 import java.util.List;
@@ -66,7 +67,7 @@ public class Page<T> {
     }
 
     public int getPages() {
-        return IntMath.divide(totalSize,pageSize, RoundingMode.CEILING);
+        return IntMath.divide(totalSize, pageSize, RoundingMode.CEILING);
     }
 
     public boolean hasFirstPage() {
@@ -87,5 +88,9 @@ public class Page<T> {
 
     public boolean isLastPage() {
         return pageNum == getPages();
+    }
+
+    public boolean isEmpty() {
+        return CollectionUtils.isEmpty(items);
     }
 }
