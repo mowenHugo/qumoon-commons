@@ -87,7 +87,7 @@ public class Page<T> {
     }
 
     public boolean isLastPage() {
-        return pageNum == getPages();
+        return (totalSize == 0) || (pageNum == getPages());
     }
 
     public boolean isEmpty() {
