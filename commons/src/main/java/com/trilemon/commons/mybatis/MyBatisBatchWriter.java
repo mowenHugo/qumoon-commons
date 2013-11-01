@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 没有事物
  * @author kevin
  */
 public class MyBatisBatchWriter<T> implements InitializingBean {

@@ -9,7 +9,7 @@ import org.joda.time.LocalTime;
 /**
  * @author kevin
  */
-public class LocalTimeInterval {
+public class LocalTimeInterval implements Comparable<LocalTimeInterval> {
     private static final Instant CONSTANT = new Instant(0);
     private final LocalTime from;
     private final LocalTime to;
@@ -70,5 +70,10 @@ public class LocalTimeInterval {
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public int compareTo(LocalTimeInterval o) {
+        return this.from.compareTo(o.getFrom());
     }
 }
