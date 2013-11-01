@@ -19,23 +19,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * 没有事物
  * @author kevin
  */
 public class MyBatisBatchWriter<T> implements InitializingBean {
     protected static final Log logger = LogFactory.getLog(MyBatisBatchWriter.class);
     private SqlSessionTemplate sqlSessionTemplate;
-    private boolean assertUpdates = true;
     private int batchSize = 100;
 
-    /**
-     * Public setter for the flag that determines whether an assertion is made that all items cause at least one row to
-     * be updated.
-     *
-     * @param assertUpdates the flag to set. Defaults to true;
-     */
-    public void setAssertUpdates(boolean assertUpdates) {
-        this.assertUpdates = assertUpdates;
-    }
 
     /**
      * Public setter for {@link org.apache.ibatis.session.SqlSessionFactory} for injection purposes.
