@@ -60,8 +60,8 @@
 
             <dependency>
                 <groupId>com.taobao.sdk</groupId>
-                <artifactId>standard</artifactId>
-                <version>20130925</version>
+                <artifactId>turbo</artifactId>
+                <version>20131105</version>
             </dependency>
 
             <dependency>
