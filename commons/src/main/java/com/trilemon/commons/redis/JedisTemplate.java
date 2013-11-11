@@ -2,6 +2,7 @@ package com.trilemon.commons.redis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.SerializationUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -165,6 +166,16 @@ public class JedisTemplate {
             }
         });
     }
+
+    public <T> T getObj(final String key) {
+        return execute(new JedisAction<T>() {
+            @Override
+            public T action(Jedis jedis) {
+                byte[] result= jedis.get(key.getBytes());
+                return (T)SerializationUtils.deserialize(result);
+            }
+        });
+    }
     public byte[] get(final byte[] key) {
         return execute(new JedisAction<byte[]>() {
 
@@ -211,6 +222,16 @@ public class JedisTemplate {
         });
     }
 
+    public  <T>  void set(final byte[] key, final T value) {
+        execute(new JedisActionNoResult() {
+
+            @Override
+            public void action(Jedis jedis) {
+                jedis.set(key, SerializationUtils.serialize(value));
+            }
+        });
+    }
+
     public void setex(final String key, final String value, final int seconds) {
         execute(new JedisActionNoResult() {
 
@@ -227,6 +248,16 @@ public class JedisTemplate {
             @Override
             public void action(Jedis jedis) {
                 jedis.setex(key, seconds, value);
+            }
+        });
+    }
+
+    public <T> void setex(final byte[] key, final T value, final int seconds) {
+        execute(new JedisActionNoResult() {
+
+            @Override
+            public void action(Jedis jedis) {
+                jedis.setex(key, seconds,  SerializationUtils.serialize(value));
             }
         });
     }
@@ -250,6 +281,16 @@ public class JedisTemplate {
             @Override
             public Boolean action(Jedis jedis) {
                 return jedis.setnx(key, value) == 1 ? true : false;
+            }
+        });
+    }
+
+    public <T> boolean setnx(final byte[] key, final T value) {
+        return execute(new JedisAction<Boolean>() {
+
+            @Override
+            public Boolean action(Jedis jedis) {
+                return jedis.setnx(key, SerializationUtils.serialize(value)) == 1 ? true : false;
             }
         });
     }

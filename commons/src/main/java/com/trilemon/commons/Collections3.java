@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author kevin
@@ -44,7 +46,7 @@ public class Collections3 {
     }
 
     public static List<Long> string2LongList(String from) {
-        Iterable<String> stringList=COMMA_SPLITTER.split(from);
+        Iterable<String> stringList = COMMA_SPLITTER.split(from);
         List<Long> longList = Lists.newArrayListWithCapacity(Iterables.size(stringList));
         for (String ele : stringList) {
             longList.add(Long.valueOf(ele));
@@ -74,5 +76,13 @@ public class Collections3 {
             StringList.add(String.valueOf(ele));
         }
         return StringList;
+    }
+
+    public static <E> E getRandomElem(List<E> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(new Random().nextInt(list.size()));
+        }
     }
 }
