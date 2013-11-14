@@ -26,6 +26,7 @@
     <modules>
         <module>deps</module>
         <module>commons</module>
+        <module>job-queue</module>
     </modules>
 
     <description>Trilemon-Commons</description>
