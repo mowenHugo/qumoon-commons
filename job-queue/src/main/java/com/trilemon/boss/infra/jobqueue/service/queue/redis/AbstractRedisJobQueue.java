@@ -1,13 +1,11 @@
-package com.trilemon.boss.infra.jobqueue.service;
+package com.trilemon.boss.infra.jobqueue.service.queue.redis;
 
-import com.google.common.collect.Lists;
 import com.trilemon.boss.infra.jobqueue.model.Master;
+import com.trilemon.boss.infra.jobqueue.service.queue.JobQueue;
 import com.trilemon.commons.redis.JedisTemplate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.SerializationUtils;
-import redis.clients.jedis.Jedis;
 
 import java.util.List;
 
@@ -16,22 +14,22 @@ import java.util.List;
  *
  * @author kevin
  */
-public class RedisJobQueueService<T> implements JobQueueService<T> {
-    private static Logger logger = LoggerFactory.getLogger(RedisJobQueueService.class);
+public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
+    private static Logger logger = LoggerFactory.getLogger(AbstractRedisJobQueue.class);
     //是否是 master
     private boolean isMaster;
     private String group;
     private String masterName;
-    private JedisTemplate jedisTemplate;
+    protected JedisTemplate jedisTemplate;
     private int expireTime = 10;//秒
 
     @Override
-    public void init() {
+    public void start() {
         checkMaster();
     }
 
     /**
-     * 缓存设置的是一分钟过期，所以如果 master down 掉，写队列最多会有设定缓存秒数的不可用
+     * 如果 master down 掉，写队列最多会有设定缓存秒数的不可用
      */
     private void checkMaster() {
         while (true) {
@@ -65,32 +63,13 @@ public class RedisJobQueueService<T> implements JobQueueService<T> {
     }
 
     @Override
-    public T getJob(final String tag) {
-        jedisTemplate.execute(new JedisTemplate.JedisAction<T>() {
-            @Override
-            public T action(Jedis jedis) {
-                byte[] result = jedis.lpop(tag.getBytes());
-                return (T) SerializationUtils.deserialize(result);
-            }
-        });
-        return null;
-    }
-
-    @Override
     public void addJob(String tag, T job) {
         if (isMaster) {
             doAddJob(tag, job);
         }
     }
 
-    public void doAddJob(final String tag, final T job) {
-        jedisTemplate.execute(new JedisTemplate.JedisAction<Long>() {
-            @Override
-            public Long action(Jedis jedis) {
-                return jedis.rpush(tag.getBytes(), SerializationUtils.serialize(job));
-            }
-        });
-    }
+    abstract void doAddJob(final String tag, final T job);
 
     @Override
     public void addJobs(String tag, List<T> jobs) {
@@ -99,18 +78,7 @@ public class RedisJobQueueService<T> implements JobQueueService<T> {
         }
     }
 
-    public void doAddJobs(final String tag, List<T> jobs) {
-        final List<byte[]> byteOfJobs = Lists.newArrayList();
-        for (T job : jobs) {
-            byteOfJobs.add(SerializationUtils.serialize(job));
-        }
-        jedisTemplate.execute(new JedisTemplate.JedisAction<Long>() {
-            @Override
-            public Long action(Jedis jedis) {
-                return jedis.rpush(tag.getBytes(), byteOfJobs.toArray(new byte[0][]));
-            }
-        });
-    }
+    abstract void doAddJobs(final String tag, List<T> jobs);
 
     public String getGroup() {
         return group;

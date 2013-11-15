@@ -23,7 +23,9 @@ public class Page<T> {
         this.totalSize = totalSize;
         this.pageSize = pageSize;
         this.pageNum = pageNum;
-        this.items = items;
+        if (null != items) {
+            this.items = items;
+        }
     }
 
     public static <T> Page<T> empty() {

@@ -1,12 +1,12 @@
-package com.trilemon.boss.infra.jobqueue.service;
+package com.trilemon.boss.infra.jobqueue.service.queue;
 
 import java.util.List;
 
 /**
  * @author kevin
  */
-public interface JobQueueService<T> {
-    void init();
+public interface JobQueue<T> {
+    void start();
 
     T getJob(String tag);
 
