@@ -1,4 +1,4 @@
-package com.trilemon.boss.infra.jobqueue.service.queue;
+package com.trilemon.jobqueue.service.queue;
 
 import java.util.List;
 

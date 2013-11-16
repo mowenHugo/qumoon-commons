@@ -1,8 +1,9 @@
-package com.trilemon.boss.infra.jobqueue.service.queue.redis;
+package com.trilemon.jobqueue.service.queue.redis;
 
-import com.trilemon.boss.infra.jobqueue.model.Master;
-import com.trilemon.boss.infra.jobqueue.service.queue.JobQueue;
+import com.trilemon.commons.BlockingThreadPoolExecutor;
 import com.trilemon.commons.redis.JedisTemplate;
+import com.trilemon.jobqueue.model.Master;
+import com.trilemon.jobqueue.service.queue.JobQueue;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +17,23 @@ import java.util.List;
  */
 public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
     private static Logger logger = LoggerFactory.getLogger(AbstractRedisJobQueue.class);
+    protected JedisTemplate jedisTemplate;
     //是否是 master
     private boolean isMaster;
     private String group;
     private String masterName;
-    protected JedisTemplate jedisTemplate;
     private int expireTime = 10;//秒
+    private BlockingThreadPoolExecutor checkMasterThread = new BlockingThreadPoolExecutor(1);
 
     @Override
     public void start() {
-        checkMaster();
+        checkMasterThread.submit(new Runnable() {
+            @Override
+            public void run() {
+                checkMaster();
+            }
+        });
+        logger.info("start master check thread.");
     }
 
     /**

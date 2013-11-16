@@ -1,4 +1,4 @@
-package com.trilemon.boss.infra.jobqueue.model;
+package com.trilemon.jobqueue.model;
 
 import org.joda.time.DateTime;
 

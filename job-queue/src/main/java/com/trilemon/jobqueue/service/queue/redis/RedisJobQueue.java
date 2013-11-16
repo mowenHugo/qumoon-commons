@@ -1,4 +1,4 @@
-package com.trilemon.boss.infra.jobqueue.service.queue.redis;
+package com.trilemon.jobqueue.service.queue.redis;
 
 import com.google.common.collect.Lists;
 import com.trilemon.commons.redis.JedisTemplate;
@@ -10,10 +10,11 @@ import redis.clients.jedis.Jedis;
 import java.util.List;
 
 /**
- * 优先级队列
+ * 普通队列，FIFO
+ *
  * @author kevin
  */
-public class PriorityRedisJobQueue <T extends PriorityScorable> extends AbstractRedisJobQueue<T> {
+public class RedisJobQueue<T> extends AbstractRedisJobQueue<T> {
     private static Logger logger = LoggerFactory.getLogger(RedisJobQueue.class);
 
     @Override
@@ -27,6 +28,7 @@ public class PriorityRedisJobQueue <T extends PriorityScorable> extends Abstract
         });
         return null;
     }
+
     public void doAddJob(final String tag, final T job) {
         jedisTemplate.execute(new JedisTemplate.JedisAction<Long>() {
             @Override
@@ -35,6 +37,7 @@ public class PriorityRedisJobQueue <T extends PriorityScorable> extends Abstract
             }
         });
     }
+
     public void doAddJobs(final String tag, List<T> jobs) {
         final List<byte[]> byteOfJobs = Lists.newArrayList();
         for (T job : jobs) {
