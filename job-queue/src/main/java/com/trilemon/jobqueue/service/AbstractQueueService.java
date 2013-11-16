@@ -18,8 +18,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author kevin
  */
-public abstract class AbstractRedisQueueService<E> implements QueueService<E> {
-    private static Logger logger = LoggerFactory.getLogger(AbstractRedisQueueService.class);
+public abstract class AbstractQueueService<E> implements QueueService<E> {
+    private static Logger logger = LoggerFactory.getLogger(AbstractQueueService.class);
     private BlockingThreadPoolExecutor taskPool ;
     private BlockingThreadPoolExecutor writeThread= new BlockingThreadPoolExecutor(1);
     private JobQueue<E> jobQueue;
