@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.trilemon</groupId>
-        <artifactId>trilemon-commons-deps</artifactId>
+        <artifactId>trilemon-deps</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
