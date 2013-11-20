@@ -1,7 +1,6 @@
 package com.trilemon.commons.mybatis;
 
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -10,8 +9,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import java.util.List;
 
@@ -25,7 +22,6 @@ public class MyBatisBatchWriter<T> implements InitializingBean {
     protected static final Log logger = LogFactory.getLog(MyBatisBatchWriter.class);
     private SqlSessionTemplate sqlSessionTemplate;
     private int batchSize = 100;
-
 
     /**
      * Public setter for {@link org.apache.ibatis.session.SqlSessionFactory} for injection purposes.
@@ -84,21 +80,14 @@ public class MyBatisBatchWriter<T> implements InitializingBean {
             } finally {
                 session.close();
             }
-            if (result.size() != 1) {
-                throw new InvalidDataAccessResourceUsageException("Batch execution returned invalid results. " +
-                        "Expected 1 but number of BatchResult objects returned was " + result.size());
-            }
 
-            int[] updateCounts = result.get(0).getUpdateCounts();
-
-            for (int i = 0; i < updateCounts.length; i++) {
-                int value = updateCounts[i];
-                if (value == 0) {
-                    throw new EmptyResultDataAccessException("Item " + i + " of " + updateCounts.length
-                            + " did not update any rows: [" + items.get(i) + "]", 1);
+            List<Integer> updateCounts = Lists.newArrayList();
+            for (BatchResult batchResult : result) {
+                for (int count : batchResult.getUpdateCounts()) {
+                    updateCounts.add(count);
                 }
             }
-            return Ints.asList(updateCounts);
+            return updateCounts;
         }
         return Lists.newArrayList();
     }

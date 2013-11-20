@@ -23,10 +23,10 @@ public class NumberUtils {
         if (null != numberStr) {
             if (null != unit) {
                 if ("万".equals(unit)) {
-                    return (int)(numberFormat.parse(numberStr).doubleValue() * 10000);
+                    return (int) (numberFormat.parse(numberStr).doubleValue() * 10000);
                 }
             }
-            return (int)(numberFormat.parse(numberStr).doubleValue());
+            return (int) (numberFormat.parse(numberStr).doubleValue());
         }
         return 0;
     }
@@ -35,7 +35,8 @@ public class NumberUtils {
         return numberFormat.parse(str);
     }
 
-    public static void main(String[] args) throws ParseException {
-        System.out.println(NumberUtils.parseInt("19.9万人"));
+    public static String toNumberString(String str) {
+        return str.replaceFirst("^0+(?!$)", "");
     }
+
 }
