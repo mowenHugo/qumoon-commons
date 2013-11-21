@@ -19,14 +19,13 @@ public class RedisJobQueue<T> extends AbstractRedisJobQueue<T> {
 
     @Override
     public T getJob(final String tag) {
-        jedisTemplate.execute(new JedisTemplate.JedisAction<T>() {
+        return jedisTemplate.execute(new JedisTemplate.JedisAction<T>() {
             @Override
             public T action(Jedis jedis) {
                 byte[] result = jedis.lpop(tag.getBytes());
                 return (T) SerializationUtils.deserialize(result);
             }
         });
-        return null;
     }
 
     public void doAddJob(final String tag, final T job) {
