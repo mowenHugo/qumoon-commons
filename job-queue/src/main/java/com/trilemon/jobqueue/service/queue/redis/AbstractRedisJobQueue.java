@@ -4,6 +4,7 @@ import com.trilemon.commons.BlockingThreadPoolExecutor;
 import com.trilemon.commons.redis.JedisTemplate;
 import com.trilemon.jobqueue.model.Master;
 import com.trilemon.jobqueue.service.queue.JobQueue;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
     private static Logger logger = LoggerFactory.getLogger(AbstractRedisJobQueue.class);
     protected JedisTemplate jedisTemplate;
     //是否是 master
-    private boolean isMaster;
+    private boolean isMaster = false;
     private String group;
     private String masterName;
     private int expireTime = 10;//秒
@@ -41,10 +42,14 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
      */
     private void checkMaster() {
         while (true) {
-            doCheckMaster();
             try {
-                Thread.sleep(expireTime * 1000);
-            } catch (InterruptedException e) {
+                doCheckMaster();
+                try {
+                    Thread.sleep(expireTime * 1000);
+                } catch (InterruptedException e) {
+                    logger.error("check master error", e);
+                }
+            } catch (Throwable e) {
                 logger.error("check master error", e);
             }
         }
@@ -54,6 +59,7 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
      * 检查是否是 master
      */
     public void doCheckMaster() {
+        boolean prevMaster = isMaster;
         Master master = jedisTemplate.getObj(group);
         if (null == master) {
             master = new Master();
@@ -67,6 +73,13 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
             isMaster = false;
         } else {
             isMaster = master.getMaster().equals(masterName);
+        }
+        if (prevMaster != isMaster) {
+            if (isMaster) {
+                logger.info("election master: group[{}] master[{}]", group, ToStringBuilder.reflectionToString(master));
+            } else {
+                logger.info("remove master: group[{}] master[{}]", group, ToStringBuilder.reflectionToString(master));
+            }
         }
     }
 
