@@ -20,20 +20,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractQueueService<E> implements QueueService<E> {
     private static Logger logger = LoggerFactory.getLogger(AbstractQueueService.class);
-    private BlockingThreadPoolExecutor taskPool ;
-    private BlockingThreadPoolExecutor writeThread= new BlockingThreadPoolExecutor(1);
+    private BlockingThreadPoolExecutor taskPool;
+    private BlockingThreadPoolExecutor writeThread = new BlockingThreadPoolExecutor(1);
     private JobQueue<E> jobQueue;
     private Map<String, ThreadPoolExecutor> threadPoolExecutorMap = Maps.newHashMap();
     private int pollRoundCount = 0;
     private boolean init = true;
     private String tag;
-    private int taskNum=5;
-    private int sleepMinutes=1;
+    private int taskNum = 5;
+    private int sleepMinutes = 1;
 
     @Override
     public void start() {
-        checkNotNull("tag can not be null.",tag);
-        taskPool=new BlockingThreadPoolExecutor(taskNum);
+        checkNotNull("tag can not be null.", tag);
+        taskPool = new BlockingThreadPoolExecutor(taskNum);
         threadPoolExecutorMap.put(getClass().getSimpleName() + "-task", taskPool);
 
         writeThread.submit(new Runnable() {
@@ -47,7 +47,7 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
             }
         });
 
-        logger.info("start task thread[{}]",taskPool);
+        logger.info("start task thread[{}]", taskPool);
     }
 
     @Override
@@ -64,30 +64,34 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
     public void getAndProcess() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         while (true) {
-            final E e = jobQueue.getJob(tag);
-            if (null == e) {
-                if (!init) {
-                    logger.info("end [{}] process round, spend [{}] seconds.", pollRoundCount,
-                            stopwatch.elapsed(TimeUnit.SECONDS));
-                    Threads.sleep(sleepMinutes, TimeUnit.MINUTES);
-                } else {
-                    init = false;
-                }
-                pollRoundCount++;
-                stopwatch.reset();
-                logger.info("start [{}] process round.", pollRoundCount);
-                fillQueue();
-            } else {
-                taskPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            process(e);
-                        } catch (Throwable throwable) {
-                            logger.error("process error.", throwable);
-                        }
+            try {
+                final E e = jobQueue.getJob(tag);
+                if (null == e) {
+                    if (!init) {
+                        logger.info("end [{}] process round, spend [{}] seconds.", pollRoundCount,
+                                stopwatch.elapsed(TimeUnit.SECONDS));
+                        Threads.sleep(sleepMinutes, TimeUnit.MINUTES);
+                    } else {
+                        init = false;
                     }
-                });
+                    pollRoundCount++;
+                    stopwatch.reset();
+                    logger.info("start [{}] process round.", pollRoundCount);
+                    fillQueue();
+                } else {
+                    taskPool.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                process(e);
+                            } catch (Throwable throwable) {
+                                logger.error("process error.", throwable);
+                            }
+                        }
+                    });
+                }
+            } catch (Throwable e) {
+                logger.error("getAndProcess error",e);
             }
         }
     }
@@ -106,6 +110,10 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
         return threadPoolExecutorMap;
     }
 
+    public void setThreadPoolExecutorMap(Map<String, ThreadPoolExecutor> threadPoolExecutorMap) {
+        this.threadPoolExecutorMap = threadPoolExecutorMap;
+    }
+
     public BlockingThreadPoolExecutor getTaskPool() {
         return taskPool;
     }
@@ -114,13 +122,12 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
         this.taskPool = taskPool;
     }
 
-
     public JobQueue<E> getJobQueue() {
         return jobQueue;
     }
 
-    public void setThreadPoolExecutorMap(Map<String, ThreadPoolExecutor> threadPoolExecutorMap) {
-        this.threadPoolExecutorMap = threadPoolExecutorMap;
+    public void setJobQueue(JobQueue<E> jobQueue) {
+        this.jobQueue = jobQueue;
     }
 
     public int getPollRoundCount() {
@@ -161,9 +168,5 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
 
     public void setTaskNum(int taskNum) {
         this.taskNum = taskNum;
-    }
-
-    public void setJobQueue(JobQueue<E> jobQueue) {
-        this.jobQueue = jobQueue;
     }
 }
