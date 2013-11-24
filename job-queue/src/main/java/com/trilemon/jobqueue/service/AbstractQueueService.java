@@ -28,7 +28,11 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
     private boolean init = true;
     private String tag;
     private int taskNum = 5;
-    private int sleepMinutes = 1;
+    //任务休眠时间
+    private int sleepMinutes = 10;
+    //当队列一次完整的 poll
+    private int minSleepMinutes = 1;
+    private int queuePollMinutes = 10;
 
     @Override
     public void start() {
@@ -68,9 +72,15 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
                 final E e = jobQueue.getJob(tag);
                 if (null == e) {
                     if (!init) {
-                        logger.info("end [{}] process round, spend [{}] seconds.", pollRoundCount,
-                                stopwatch.elapsed(TimeUnit.SECONDS));
-                        Threads.sleep(sleepMinutes, TimeUnit.MINUTES);
+                        long queuePollSecond = stopwatch.elapsed(TimeUnit.SECONDS);
+                        logger.info("end [{}] process round, spend [{}] seconds.",
+                                pollRoundCount,
+                                queuePollSecond);
+                        if (queuePollSecond >= 60 * queuePollMinutes) {
+                            Threads.sleep(minSleepMinutes, TimeUnit.MINUTES);
+                        } else {
+                            Threads.sleep(sleepMinutes, TimeUnit.MINUTES);
+                        }
                     } else {
                         init = false;
                     }
@@ -91,7 +101,7 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
                     });
                 }
             } catch (Throwable e) {
-                logger.error("getAndProcess error",e);
+                logger.error("getAndProcess error", e);
             }
         }
     }
@@ -168,5 +178,21 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
 
     public void setTaskNum(int taskNum) {
         this.taskNum = taskNum;
+    }
+
+    public int getMinSleepMinutes() {
+        return minSleepMinutes;
+    }
+
+    public void setMinSleepMinutes(int minSleepMinutes) {
+        this.minSleepMinutes = minSleepMinutes;
+    }
+
+    public int getQueuePollMinutes() {
+        return queuePollMinutes;
+    }
+
+    public void setQueuePollMinutes(int queuePollMinutes) {
+        this.queuePollMinutes = queuePollMinutes;
     }
 }

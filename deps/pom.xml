@@ -19,7 +19,7 @@
         <!-- 主要依赖库的版本定义 -->
         <spring.version>3.2.4.RELEASE</spring.version>
         <ibatis.version>2.3.4.726</ibatis.version>
-        <cobarclient.version>2.1.0-SNAPSHOT</cobarclient.version>
+        <cobarclient.version>2.2.0-SNAPSHOT</cobarclient.version>
         <mybatis.version>3.2.3</mybatis.version>
         <mybatis-spring.version>1.2.1</mybatis-spring.version>
         <sitemesh.version>2.4.2</sitemesh.version>
@@ -651,6 +651,13 @@
                 <artifactId>jfreechart</artifactId>
                 <version>1.0.15</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.7</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
