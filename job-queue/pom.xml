@@ -344,6 +344,12 @@
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>it.sauronsoftware.cron4j</groupId>
+            <artifactId>cron4j</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

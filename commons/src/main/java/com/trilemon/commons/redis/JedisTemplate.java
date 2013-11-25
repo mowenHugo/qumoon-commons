@@ -176,6 +176,24 @@ public class JedisTemplate {
             }
         });
     }
+
+    public <T> T setAndGetObj(final String key,final T t, final int seconds) {
+        return execute(new JedisAction<T>() {
+            @Override
+            public T action(Jedis jedis) {
+                byte[] result= jedis.get(key.getBytes());
+                if(null==result){
+                    setex(key.getBytes(),t,seconds);
+                    return t;
+                }else{
+                    return (T)SerializationUtils.deserialize(result);
+                }
+
+            }
+        });
+    }
+
+
     public byte[] get(final byte[] key) {
         return execute(new JedisAction<byte[]>() {
 

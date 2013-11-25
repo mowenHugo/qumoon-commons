@@ -10,24 +10,23 @@ import redis.clients.jedis.Jedis;
 import java.util.List;
 
 /**
- * 普通队列，FIFO
- *
+ * 优先级队列
  * @author kevin
  */
-public class RedisJobQueue<T> extends AbstractRedisJobQueue<T> {
-    private static Logger logger = LoggerFactory.getLogger(RedisJobQueue.class);
+public class PriorityBlockingRedisJobQueue<T extends PriorityScorable> extends AbstractRedisJobQueue<T> {
+    private static Logger logger = LoggerFactory.getLogger(BlockingRedisJobQueue.class);
 
     @Override
     public T getJob(final String tag) {
-        return jedisTemplate.execute(new JedisTemplate.JedisAction<T>() {
+        jedisTemplate.execute(new JedisTemplate.JedisAction<T>() {
             @Override
             public T action(Jedis jedis) {
                 byte[] result = jedis.lpop(tag.getBytes());
                 return (T) SerializationUtils.deserialize(result);
             }
         });
+        return null;
     }
-
     public void doAddJob(final String tag, final T job) {
         jedisTemplate.execute(new JedisTemplate.JedisAction<Long>() {
             @Override
@@ -36,7 +35,6 @@ public class RedisJobQueue<T> extends AbstractRedisJobQueue<T> {
             }
         });
     }
-
     public void doAddJobs(final String tag, List<T> jobs) {
         final List<byte[]> byteOfJobs = Lists.newArrayList();
         for (T job : jobs) {

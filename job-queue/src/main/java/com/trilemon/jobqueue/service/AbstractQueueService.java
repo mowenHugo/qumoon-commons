@@ -1,9 +1,7 @@
 package com.trilemon.jobqueue.service;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.trilemon.commons.BlockingThreadPoolExecutor;
-import com.trilemon.commons.Threads;
 import com.trilemon.jobqueue.service.queue.JobQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -19,77 +16,59 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author kevin
  */
 public abstract class AbstractQueueService<E> implements QueueService<E> {
-    private static Logger logger = LoggerFactory.getLogger(AbstractQueueService.class);
-    private BlockingThreadPoolExecutor taskPool;
-    private BlockingThreadPoolExecutor writeThread = new BlockingThreadPoolExecutor(1);
+    private static Logger logger = LoggerFactory.getLogger(Thread.currentThread().getClass());
+    private BlockingThreadPoolExecutor pollThreads;
     private JobQueue<E> jobQueue;
     private Map<String, ThreadPoolExecutor> threadPoolExecutorMap = Maps.newHashMap();
     private int pollRoundCount = 0;
     private boolean init = true;
     private String tag;
-    private int taskNum = 5;
-    //任务休眠时间
-    private int sleepMinutes = 10;
-    //当队列一次完整的 poll
-    private int minSleepMinutes = 1;
-    private int queuePollMinutes = 10;
+    private int pollNum = 5;
 
     @Override
     public void start() {
         checkNotNull("tag can not be null.", tag);
-        taskPool = new BlockingThreadPoolExecutor(taskNum);
-        threadPoolExecutorMap.put(getClass().getSimpleName() + "-task", taskPool);
+        pollThreads = new BlockingThreadPoolExecutor(pollNum);
+        threadPoolExecutorMap.put(getClass().getSimpleName() + "-poll", pollThreads);
 
-        writeThread.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    getAndProcess();
-                } catch (Throwable throwable) {
-                    logger.error("getAndProcess thread error.", throwable);
-                }
-            }
-        });
+        //clean
+        clean();
 
-        logger.info("start task thread[{}]", taskPool);
+        triggerPoll();
+        startAdd();
+
+        logger.info("start task thread[{}]", pollThreads);
+    }
+
+    /**
+     * 启动写队列线程
+     */
+    protected abstract void startAdd();
+
+    protected void triggerAdd() {
+        try {
+            fillQueue();
+        } catch (Throwable throwable) {
+            logger.error("getAndProcess thread error.", throwable);
+        }
     }
 
     @Override
-    public void reboot() {
+    public void clean() {
         //do nothing
     }
 
     @Override
     public void timeout() {
-        //do nothing
+        logger.info("this method do nothing now, do not implement it.");
     }
 
-    @Override
-    public void getAndProcess() {
-        Stopwatch stopwatch = Stopwatch.createStarted();
+    public void triggerPoll() {
         while (true) {
             try {
                 final E e = jobQueue.getJob(tag);
-                if (null == e) {
-                    if (!init) {
-                        long queuePollSecond = stopwatch.elapsed(TimeUnit.SECONDS);
-                        logger.info("end [{}] process round, spend [{}] seconds.",
-                                pollRoundCount,
-                                queuePollSecond);
-                        if (queuePollSecond >= 60 * queuePollMinutes) {
-                            Threads.sleep(minSleepMinutes, TimeUnit.MINUTES);
-                        } else {
-                            Threads.sleep(sleepMinutes, TimeUnit.MINUTES);
-                        }
-                    } else {
-                        init = false;
-                    }
-                    pollRoundCount++;
-                    stopwatch.reset();
-                    logger.info("start [{}] process round.", pollRoundCount);
-                    fillQueue();
-                } else {
-                    taskPool.submit(new Runnable() {
+                if (null != e) {
+                    pollThreads.submit(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -99,6 +78,8 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
                             }
                         }
                     });
+                }else{
+                    pollNull();
                 }
             } catch (Throwable e) {
                 logger.error("getAndProcess error", e);
@@ -124,12 +105,12 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
         this.threadPoolExecutorMap = threadPoolExecutorMap;
     }
 
-    public BlockingThreadPoolExecutor getTaskPool() {
-        return taskPool;
+    public BlockingThreadPoolExecutor getPollThreads() {
+        return pollThreads;
     }
 
-    public void setTaskPool(BlockingThreadPoolExecutor taskPool) {
-        this.taskPool = taskPool;
+    public void setPollThreads(BlockingThreadPoolExecutor pollThreads) {
+        this.pollThreads = pollThreads;
     }
 
     public JobQueue<E> getJobQueue() {
@@ -164,35 +145,11 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
         this.tag = tag;
     }
 
-    public int getSleepMinutes() {
-        return sleepMinutes;
+    public int getPollNum() {
+        return pollNum;
     }
 
-    public void setSleepMinutes(int sleepMinutes) {
-        this.sleepMinutes = sleepMinutes;
-    }
-
-    public int getTaskNum() {
-        return taskNum;
-    }
-
-    public void setTaskNum(int taskNum) {
-        this.taskNum = taskNum;
-    }
-
-    public int getMinSleepMinutes() {
-        return minSleepMinutes;
-    }
-
-    public void setMinSleepMinutes(int minSleepMinutes) {
-        this.minSleepMinutes = minSleepMinutes;
-    }
-
-    public int getQueuePollMinutes() {
-        return queuePollMinutes;
-    }
-
-    public void setQueuePollMinutes(int queuePollMinutes) {
-        this.queuePollMinutes = queuePollMinutes;
+    public void setPollNum(int pollNum) {
+        this.pollNum = pollNum;
     }
 }
