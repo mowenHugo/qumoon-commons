@@ -17,6 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractQueueService<E> implements QueueService<E> {
     private static Logger logger = LoggerFactory.getLogger(Thread.currentThread().getClass());
+    private BlockingThreadPoolExecutor pollWrapThreads = new BlockingThreadPoolExecutor(1);
     private BlockingThreadPoolExecutor pollThreads;
     private JobQueue<E> jobQueue;
     private Map<String, ThreadPoolExecutor> threadPoolExecutorMap = Maps.newHashMap();
@@ -34,10 +35,20 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
         //clean
         clean();
 
-        triggerPoll();
+        startPoll();
         startAdd();
 
         logger.info("start task thread[{}]", pollThreads);
+    }
+
+    protected void startPoll() {
+        pollWrapThreads.submit(new Runnable() {
+            @Override
+            public void run() {
+                triggerPoll();
+            }
+        });
+        logger.info("started poll");
     }
 
     /**
@@ -78,7 +89,7 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
                             }
                         }
                     });
-                }else{
+                } else {
                     pollNull();
                 }
             } catch (Throwable e) {
