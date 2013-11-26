@@ -35,6 +35,10 @@ public class DateUtils {
         return new DateTime(day).millisOfDay().withMaximumValue().toDate();
     }
 
+    public static DateTime endOf(DateTime day) {
+        return day.millisOfDay().withMaximumValue();
+    }
+
     public static DateTime startOfYesterday() {
         return startOfNDaysBefore(1);
     }
