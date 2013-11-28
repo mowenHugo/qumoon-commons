@@ -13,4 +13,11 @@ public abstract class ShardTableRouter<T extends IShardTable> {
         t.setTableId(tableId);
         return tableId;
     }
+
+    public ShardTableMap getRouteMap(T t) {
+        ShardTableMap shardTableMap = new ShardTableMap();
+        Integer tableId = route(t);
+        shardTableMap.setTableId(tableId);
+        return shardTableMap;
+    }
 }
