@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.*;
 import java.util.Enumeration;
@@ -257,5 +258,9 @@ public class WebUtils {
             }
         }
         return null;
+    }
+
+    public static String getRequestHost(HttpServletRequest request) {
+        return String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
     }
 }
