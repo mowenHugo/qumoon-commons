@@ -1,9 +1,12 @@
 package com.trilemon.commons.db;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author kevin
  */
 public class ShardTable implements IShardTable{
+    @JsonIgnore
     private int tableId;
 
     public Integer getTableId() {
