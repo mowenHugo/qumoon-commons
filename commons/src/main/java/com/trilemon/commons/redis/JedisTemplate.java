@@ -323,6 +323,17 @@ public class JedisTemplate {
         });
     }
 
+    public <T> T getSet(final String key,final T t) {
+        return execute(new JedisAction<T>() {
+            @Override
+            public T action(Jedis jedis) {
+                byte[] result=jedis.getSet( key.getBytes(), SerializationUtils.serialize(t));
+                return (T)SerializationUtils.deserialize(result);
+            }
+        });
+    }
+
+
     public long decr(final String key) {
         return execute(new JedisAction<Long>() {
 
