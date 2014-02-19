@@ -18,8 +18,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.trilemon</groupId>
-    <artifactId>trilemon-commons-root</artifactId>
+    <groupId>com.qumoon</groupId>
+    <artifactId>qumoon-commons-root</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -29,12 +29,12 @@
         <module>job-queue</module>
     </modules>
 
-    <description>Trilemon-Commons</description>
-    <url>https://github.com/KevinGu/Trilemon-Commons</url>
+    <description>qumoon-commons</description>
+    <url>https://github.com/KevinGu/qumoon-commons</url>
     <inceptionYear>2013</inceptionYear>
     <organization>
-        <name>trilemon</name>
-        <url>http://www.trilemon.com</url>
+        <name>qumoon</name>
+        <url>http://www.qumoon.com</url>
     </organization>
 
     <developers>
@@ -42,7 +42,7 @@
             <id>kevin</id>
             <name>Kevin Gu</name>
             <email>guyan.data@gmail.com</email>
-            <organization>trilemon</organization>
+            <organization>qumoon</organization>
             <roles>
                 <role>admin</role>
             </roles>
@@ -52,6 +52,13 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/KevinGu/Trilemon-Commons/issues</url>
+        <url>https://github.com/KevinGu/qumoon/issues</url>
     </issueManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>raycloud-snapshots</id>
+            <url>http://maven.superboss.cc:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

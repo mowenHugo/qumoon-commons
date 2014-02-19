@@ -5,15 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.trilemon</groupId>
-        <artifactId>trilemon-deps</artifactId>
+        <groupId>com.qumoon</groupId>
+        <artifactId>qumoon-deps</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../deps</relativePath>
     </parent>
 
-    <artifactId>trilemon-commons</artifactId>
+    <artifactId>qumoon-commons</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>raycloud-snapshots</id>
+            <url>http://maven.superboss.cc:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <!-- 依赖项定义 -->
     <dependencies>
