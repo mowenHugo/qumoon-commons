@@ -7,6 +7,7 @@ import java.util.Random;
 
 /**
  * 根据概率随机选择一个元素
+ *
  * @author kevin
  */
 public class RandomSelector<T> {
@@ -22,8 +23,8 @@ public class RandomSelector<T> {
         }
     }
 
-    public static <T> RandomSelector build(Map<T, Integer> items) {
-        return new RandomSelector(items);
+    public static <T> RandomSelector<T> build(Map<T, Integer> items) {
+        return new RandomSelector<T>(items);
     }
 
     public T getRandom() {
@@ -31,14 +32,26 @@ public class RandomSelector<T> {
             return null;
         }
         int index = rand.nextInt(totalSum);
-        int sum = 0;
+        int sum = -1;
         while (true) {
             for (Map.Entry<T, Integer> entry : items.entrySet()) {
+                sum = sum + entry.getValue();
                 if (sum >= index) {
                     return entry.getKey();
                 }
-                sum = sum + entry.getValue();
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Map<String, Integer> map = Maps.newHashMap();
+        map.put("a", 1);
+        map.put("b", 2);
+        map.put("c", 1);
+        RandomSelector<String> randomSelector=RandomSelector.build(map);
+        for (int i = 0; i < 100; i++) {
+            System.out.println(randomSelector.getRandom());
+        }
+
     }
 }
