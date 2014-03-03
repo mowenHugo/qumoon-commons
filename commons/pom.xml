@@ -78,6 +78,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.ibatis</groupId>
+            <artifactId>ibatis-sqlmap</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
         </dependency>
@@ -130,12 +135,6 @@
             <artifactId>shiro-ehcache</artifactId>
         </dependency>
         <!-- SECURITY end -->
-
-        <!-- TIMER -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
 
         <!-- CACHE begin -->
         <dependency>

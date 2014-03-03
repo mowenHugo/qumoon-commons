@@ -10,7 +10,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.qumoon</groupId>
     <artifactId>qumoon-job-queue</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -132,12 +131,6 @@
             <artifactId>shiro-ehcache</artifactId>
         </dependency>
         <!-- SECURITY end -->
-
-        <!-- TIMER -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
 
         <!-- CACHE begin -->
         <dependency>

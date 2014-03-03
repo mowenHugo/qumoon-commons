@@ -24,7 +24,6 @@
         <mybatis-spring.version>1.2.1</mybatis-spring.version>
         <sitemesh.version>2.4.2</sitemesh.version>
         <shiro.version>1.2.2</shiro.version>
-        <quartz.version>2.2.1</quartz.version>
         <ehcache.version>2.6.6</ehcache.version>
         <spymemcached.version>2.10.1</spymemcached.version>
         <hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
@@ -287,14 +286,6 @@
             </dependency>
             <!-- SECURITY end -->
 
-            <!-- TIMER -->
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
-            </dependency>
-
-            <!-- CACHE begin -->
             <!-- memcached -->
             <dependency>
                 <groupId>net.spy</groupId>
@@ -650,7 +641,7 @@
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
-                <version>2.2.1</version>
+                <version>2.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jfree</groupId>
