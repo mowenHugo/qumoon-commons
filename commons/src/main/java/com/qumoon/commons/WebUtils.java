@@ -213,8 +213,9 @@ public class WebUtils {
         httpGet.setHeader("User-Agent", USER_AGENT_1);
         try {
             return httpclient.execute(httpGet);
-        } finally {
+        } catch (Exception e) {
             httpGet.releaseConnection();
+            throw e;
         }
     }
 
