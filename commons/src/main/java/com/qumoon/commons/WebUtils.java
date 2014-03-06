@@ -200,6 +200,7 @@ public class WebUtils {
     }
 
     public static HttpResponse getHttpResponse(final String url, final HttpHost httpHost) throws Exception {
+
         HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
         HttpParams params = new BasicHttpParams();
@@ -210,7 +211,11 @@ public class WebUtils {
         }
         httpGet.setParams(params);
         httpGet.setHeader("User-Agent", USER_AGENT_1);
-        return httpclient.execute(httpGet);
+        try {
+            return httpclient.execute(httpGet);
+        } finally {
+            httpGet.releaseConnection();
+        }
     }
 
     public static String getHttpBodyViaProxy(final String url, int retry, final String ip, int port,
