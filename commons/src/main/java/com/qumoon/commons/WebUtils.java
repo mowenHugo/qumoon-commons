@@ -195,7 +195,7 @@ public class WebUtils {
         }
     }
 
-    public static HttpResponse getHttpResponse(final String url) throws Exception {
+    public static HttpResponse  getHttpResponse(final String url) throws Exception {
         return getHttpResponse(url, null);
     }
 

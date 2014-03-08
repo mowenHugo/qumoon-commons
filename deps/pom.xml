@@ -23,7 +23,7 @@
         <mybatis.version>3.2.3</mybatis.version>
         <mybatis-spring.version>1.2.1</mybatis-spring.version>
         <sitemesh.version>2.4.2</sitemesh.version>
-        <shiro.version>1.2.2</shiro.version>
+        <shiro.version>1.2.3</shiro.version>
         <ehcache.version>2.6.6</ehcache.version>
         <spymemcached.version>2.10.1</spymemcached.version>
         <hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
