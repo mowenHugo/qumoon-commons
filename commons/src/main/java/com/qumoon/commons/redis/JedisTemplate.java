@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.SerializationUtils;
 
+import java.util.List;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
@@ -346,12 +347,11 @@ public class JedisTemplate {
     }
 
     // ////////////// 关于List ///////////////////////////
-    public void lrange(final String key, final long start,final long end) {
-        execute(new JedisActionNoResult() {
-
+    public List<String> lrange(final String key, final long start,final long end) {
+       return execute(new JedisAction<List<String>>() {
             @Override
-            public void action(Jedis jedis) {
-                jedis.lrange(key, start, end);
+            public List<String> action(Jedis jedis) {
+               return jedis.lrange(key, start, end);
             }
         });
     }
