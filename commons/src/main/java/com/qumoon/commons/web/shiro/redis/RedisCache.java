@@ -3,26 +3,31 @@ package com.qumoon.commons.web.shiro.redis;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Bytes;
+
 import com.qumoon.commons.redis.JedisTemplate;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.SerializationUtils;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import redis.clients.jedis.JedisPool;
+
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.springframework.util.SerializationUtils.deserialize;
+import static org.springframework.util.SerializationUtils.serialize;
 
 public class RedisCache<K, V> implements Cache<K, V> {
 
-    private String cacheName;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private String cacheName;
     private JedisTemplate jedisTemplate;
 
     /**
@@ -41,18 +46,18 @@ public class RedisCache<K, V> implements Cache<K, V> {
     }
 
     public byte[] getNamespaceKey(K key) {
-        return Bytes.concat(cacheName.getBytes(), SerializationUtils.serialize(key));
+        return Bytes.concat(cacheName.getBytes(), serialize(key));
     }
 
     @Override
     public V get(K key) throws CacheException {
-        logger.debug("get value from key [{}]", key);
+        logger.debug("get value from key [{}]", ToStringBuilder.reflectionToString(key));
         try {
             if (key == null) {
                 return null;
             } else {
                 byte[] result = jedisTemplate.get(getNamespaceKey(key));
-                return (V) SerializationUtils.deserialize(result);
+                return (V) deserialize(result);
             }
         } catch (Throwable t) {
             throw new CacheException(t);
@@ -64,7 +69,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
     public V put(K key, V value) throws CacheException {
         logger.debug("put key [{}] value[{}]", key, value);
         try {
-            jedisTemplate.set(getNamespaceKey(key), SerializationUtils.serialize(value));
+            jedisTemplate.set(getNamespaceKey(key), serialize(value));
             return value;
         } catch (Throwable t) {
             throw new CacheException(t);
@@ -73,7 +78,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public V remove(K key) throws CacheException {
-        logger.debug("remove key [{}]", key);
+        logger.debug("remove key [{}]", ToStringBuilder.reflectionToString(key));
         try {
             V previous = get(key);
             jedisTemplate.del(getNamespaceKey(key));
@@ -119,7 +124,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
                 for (byte[] key : keys) {
                     byte[] value = jedisTemplate.get(key);
                     if (value != null) {
-                        values.add((V) SerializationUtils.deserialize(value));
+                        values.add((V) deserialize(value));
                     }
                 }
                 return Collections.unmodifiableList(values);
@@ -133,5 +138,9 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
     public String toString() {
         return "RedisCache name[" + cacheName + "] size[" + size() + "]";
+    }
+
+    public static void main(String[] args) {
+        System.out.println();
     }
 }

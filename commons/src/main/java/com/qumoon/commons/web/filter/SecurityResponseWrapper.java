@@ -1,19 +1,22 @@
 package com.qumoon.commons.web.filter;
 
 import com.google.common.base.Preconditions;
+
 import com.qumoon.commons.web.CookieSupport;
 import com.qumoon.commons.web.exception.CookieRejectedException;
 import com.qumoon.commons.web.exception.RedirectLocationRejectedException;
 import com.qumoon.commons.web.exception.ResponseHeaderRejectedException;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.net.URI;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * @author kevin
