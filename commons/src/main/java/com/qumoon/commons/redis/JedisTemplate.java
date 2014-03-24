@@ -3,12 +3,13 @@ package com.qumoon.commons.redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.SerializationUtils;
+
+import java.util.Set;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
-
-import java.util.Set;
 
 /**
  * JedisTemplate 提供了一个template方法，负责对Jedis连接的获取与归还。 JedisAction<T> 和 JedisActionNoResult两种回调接口，适用于有无返回值两种情况。
@@ -177,7 +178,7 @@ public class JedisTemplate {
         });
     }
 
-    public <T> T setAndGetObj(final String key,final T t, final int seconds) {
+    public <T> T getAndSetObj(final String key,final T t, final int seconds) {
         return execute(new JedisAction<T>() {
             @Override
             public T action(Jedis jedis) {
@@ -345,14 +346,24 @@ public class JedisTemplate {
     }
 
     // ////////////// 关于List ///////////////////////////
-    public void lpush(final String key, final String value) {
+    public void lrange(final String key, final long start,final long end) {
         execute(new JedisActionNoResult() {
 
             @Override
             public void action(Jedis jedis) {
-                jedis.lpush(key, value);
+                jedis.lrange(key, start, end);
             }
         });
+    }
+
+    public void lpush(final String key, final String value) {
+    execute(new JedisActionNoResult() {
+
+      @Override
+      public void action(Jedis jedis) {
+        jedis.lpush(key, value);
+      }
+    });
     }
 
     /**
