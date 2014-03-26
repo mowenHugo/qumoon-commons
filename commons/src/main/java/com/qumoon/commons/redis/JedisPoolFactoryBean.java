@@ -51,7 +51,7 @@ public class JedisPoolFactoryBean implements FactoryBean<JedisPool> {
         // 设置Pool大小，设为与线程数等大，并屏蔽掉idle checking
         JedisPoolConfig poolConfig = JedisUtils.createPoolConfig(threadCount, threadCount);
         // create jedis pool
-        JedisPool jedisPool = new JedisPool(poolConfig, host, Integer.valueOf(port), Integer.valueOf(timeout));
+        JedisPool jedisPool = new JedisPool(poolConfig, host, port, timeout);
         logger.info("create jedisPool[{}] ,host[{}] port[{}] timeout[{}] threadCount[{}]",
                 ToStringBuilder.reflectionToString(jedisPool),
                 host,
