@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -22,13 +23,23 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author kevin
@@ -37,16 +48,26 @@ public class WebUtils {
     public static final String USER_AGENT_1 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65 Safari/537.36";
     private static Logger logger = LoggerFactory.getLogger(WebUtils.class);
 
-    public static Map<String, String> getQueryParameterPair(String url) throws MalformedURLException, UnsupportedEncodingException {
+    public static Map<String, String> getQueryParameterPair(String url) throws MalformedURLException {
         Map<String, String> queryPairs = Maps.newLinkedHashMap();
         String query = new URL(url).getQuery();
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
-            queryPairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+          queryPairs.put(Encodes.urlDecode(pair.substring(0, idx)), Encodes.urlDecode(pair.substring(idx + 1)));
         }
         return queryPairs;
     }
+
+  public static Map<String, String> getQueryParameterPair2(String query)  {
+    Map<String, String> queryPairs = Maps.newLinkedHashMap();
+    String[] pairs = query.split("&");
+    for (String pair : pairs) {
+      int idx = pair.indexOf("=");
+      queryPairs.put(Encodes.urlDecode(pair.substring(0, idx)), Encodes.urlDecode(pair.substring(idx + 1)));
+    }
+    return queryPairs;
+  }
 
     /**
      * 下载文件
