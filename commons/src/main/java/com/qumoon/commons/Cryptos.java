@@ -1,11 +1,8 @@
 package com.qumoon.commons;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -191,40 +188,5 @@ public class Cryptos {
     byte[] bytes = new byte[DEFAULT_IVSIZE];
     random.nextBytes(bytes);
     return bytes;
-  }
-
-  public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException {
-//    //生成secret
-//    byte[] aesKey = generateAesKey();
-//    System.out.println( Encodes.encodeHex(aesKey));
-//    //生成iv
-//    byte[] iv = generateIV();
-//    String ivStr = Encodes.encodeHex(iv);
-//    System.out.println(ivStr);
-
-    String secret="bbf989382372b4625c1feb2a56d6220e"; //密钥，双方利用密钥加密解密
-    String iv="b8e4322eec998ff29a99c3757a4a25cb"; //iv，给密钥额外的保护，我方保存，解密的时候需要，加大破解难度
-
-    //加密
-    String timeEncode = Encodes.urlEncode("2013-02-02 00:12:12");
-    String nickEncode = Encodes.urlEncode("麻烦请给我好评");
-    String para="time="+timeEncode+"&nick="+nickEncode;
-
-    byte[] secretByte= Encodes.decodeHex(secret);
-    byte[] ivByte=Encodes.decodeHex(iv);
-
-    byte[] signEncrypt = aesEncrypt(para.getBytes(), secretByte, ivByte);
-    String signResult =Encodes.encodeHex(signEncrypt);//加密结果
-    System.out.println(signResult);
-
-    //解密
-    String signDecrypt = aesDecrypt(Encodes.decodeHex(signResult),secretByte, ivByte); //加密
-    System.out.println(signDecrypt);
-
-    Map<String,String> map=WebUtils.getQueryParameterPair2(signDecrypt);
-    String time=Encodes.urlDecode(map.get("time"));
-    String nick=Encodes.urlDecode(map.get("nick"));
-    System.out.println("time:"+time);
-    System.out.println("nick:"+nick);
   }
 }
