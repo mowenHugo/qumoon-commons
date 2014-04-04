@@ -21,8 +21,8 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Cryptos {
 
-  private static final String AES = "AES";
-  private static final String AES_EBC_PKCS5PADDING = "AES/ECB/PKCS5Padding";
+  public static final String AES = "AES";
+  public static final String AES_EBC_PKCS5PADDING = "AES/ECB/PKCS5Padding";
   private static final String HMACSHA1 = "HmacSHA1";
 
   private static final int DEFAULT_HMACSHA1_KEYSIZE = 160; // RFC2401
@@ -189,15 +189,5 @@ public class Cryptos {
     byte[] bytes = new byte[DEFAULT_IVSIZE];
     random.nextBytes(bytes);
     return bytes;
-  }
-
-  public static void main(String[] args) {
-    String key = "bbf989382372b462";
-    //加密
-    byte[] encodeByte = aesEncrypt("快云科技".getBytes(), key.getBytes(), AES_EBC_PKCS5PADDING);
-    System.out.println(Encodes.encodeHex(encodeByte));
-    //解密
-    String decString = aesDecrypt(Encodes.decodeHex("dd8a2f1bf31c5145c0cc6439d913cb56"), key.getBytes(), AES_EBC_PKCS5PADDING);
-    System.out.println(decString); //快云科技
   }
 }
