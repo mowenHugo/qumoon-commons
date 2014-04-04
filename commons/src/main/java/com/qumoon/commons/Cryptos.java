@@ -22,7 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class Cryptos {
 
   private static final String AES = "AES";
-  private static final String AES_CBC = "AES/CBC/PKCS5Padding";
+  private static final String AES_EBC_PKCS5PADDING = "AES/ECB/PKCS5Padding";
   private static final String HMACSHA1 = "HmacSHA1";
 
   private static final int DEFAULT_HMACSHA1_KEYSIZE = 160; // RFC2401
@@ -84,8 +84,8 @@ public class Cryptos {
    * @param input 原始输入字符数组
    * @param key   符合AES要求的密钥
    */
-  public static byte[] aesEncrypt(byte[] input, byte[] key) {
-    return aes(input, key, Cipher.ENCRYPT_MODE);
+  public static byte[] aesEncrypt(byte[] input, byte[] key, String aesMode) {
+    return aes(input, key, Cipher.ENCRYPT_MODE, aesMode);
   }
 
   /**
@@ -95,8 +95,8 @@ public class Cryptos {
    * @param key   符合AES要求的密钥
    * @param iv    初始向量
    */
-  public static byte[] aesEncrypt(byte[] input, byte[] key, byte[] iv) {
-    return aes(input, key, iv, Cipher.ENCRYPT_MODE);
+  public static byte[] aesEncrypt(byte[] input, byte[] key, byte[] iv, String aesMode) {
+    return aes(input, key, iv, Cipher.ENCRYPT_MODE, aesMode);
   }
 
   /**
@@ -105,8 +105,8 @@ public class Cryptos {
    * @param input Hex编码的加密字符串
    * @param key   符合AES要求的密钥
    */
-  public static String aesDecrypt(byte[] input, byte[] key) {
-    byte[] decryptResult = aes(input, key, Cipher.DECRYPT_MODE);
+  public static String aesDecrypt(byte[] input, byte[] key, String aesMode) {
+    byte[] decryptResult = aes(input, key, Cipher.DECRYPT_MODE, aesMode);
     return new String(decryptResult);
   }
 
@@ -117,8 +117,8 @@ public class Cryptos {
    * @param key   符合AES要求的密钥
    * @param iv    初始向量
    */
-  public static String aesDecrypt(byte[] input, byte[] key, byte[] iv) {
-    byte[] decryptResult = aes(input, key, iv, Cipher.DECRYPT_MODE);
+  public static String aesDecrypt(byte[] input, byte[] key, byte[] iv, String aesMode) {
+    byte[] decryptResult = aes(input, key, iv, Cipher.DECRYPT_MODE, aesMode);
     return new String(decryptResult);
   }
 
@@ -129,10 +129,10 @@ public class Cryptos {
    * @param key   符合AES要求的密钥
    * @param mode  Cipher.ENCRYPT_MODE 或 Cipher.DECRYPT_MODE
    */
-  private static byte[] aes(byte[] input, byte[] key, int mode) {
+  private static byte[] aes(byte[] input, byte[] key, int mode, String aesMode) {
     try {
       SecretKey secretKey = new SecretKeySpec(key, AES);
-      Cipher cipher = Cipher.getInstance(AES);
+      Cipher cipher = Cipher.getInstance(aesMode);
       cipher.init(mode, secretKey);
       return cipher.doFinal(input);
     } catch (GeneralSecurityException e) {
@@ -140,6 +140,7 @@ public class Cryptos {
     }
   }
 
+
   /**
    * 使用AES加密或解密无编码的原始字节数组, 返回无编码的字节数组结果.
    *
@@ -148,11 +149,11 @@ public class Cryptos {
    * @param iv    初始向量
    * @param mode  Cipher.ENCRYPT_MODE 或 Cipher.DECRYPT_MODE
    */
-  private static byte[] aes(byte[] input, byte[] key, byte[] iv, int mode) {
+  private static byte[] aes(byte[] input, byte[] key, byte[] iv, int mode, String aesMode) {
     try {
       SecretKey secretKey = new SecretKeySpec(key, AES);
       IvParameterSpec ivSpec = new IvParameterSpec(iv);
-      Cipher cipher = Cipher.getInstance(AES_CBC);
+      Cipher cipher = Cipher.getInstance(aesMode);
       cipher.init(mode, secretKey, ivSpec);
       return cipher.doFinal(input);
     } catch (GeneralSecurityException e) {
@@ -188,5 +189,15 @@ public class Cryptos {
     byte[] bytes = new byte[DEFAULT_IVSIZE];
     random.nextBytes(bytes);
     return bytes;
+  }
+
+  public static void main(String[] args) {
+    String key = "bbf989382372b462";
+    //加密
+    byte[] encodeByte = aesEncrypt("快云科技".getBytes(), key.getBytes(), AES_EBC_PKCS5PADDING);
+    System.out.println(Encodes.encodeHex(encodeByte));
+    //解密
+    String decString = aesDecrypt(Encodes.decodeHex("dd8a2f1bf31c5145c0cc6439d913cb56"), key.getBytes(), AES_EBC_PKCS5PADDING);
+    System.out.println(decString); //快云科技
   }
 }
