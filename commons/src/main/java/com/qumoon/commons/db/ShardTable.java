@@ -5,15 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * @author kevin
  */
-public class ShardTable implements IShardTable{
-    @JsonIgnore
-    private int tableId;
+public class ShardTable implements IShardTable {
 
-    public Integer getTableId() {
-        return tableId;
-    }
+  @JsonIgnore
+  private int tableId;
 
-    public void setTableId(Integer tableId) {
-        this.tableId = tableId;
-    }
+  public Integer getTableId() {
+    return tableId;
+  }
+
+  public void setTableId(Integer tableId) {
+    this.tableId = tableId;
+  }
 }

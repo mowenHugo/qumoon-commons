@@ -7,33 +7,31 @@ import java.util.List;
  */
 public interface QueueService<E> {
 
-    void start();
+  void start();
 
-    /**
-     * 正式启动队列前需要做的工作
-     */
-    void clean();
+  /**
+   * 正式启动队列前需要做的工作
+   */
+  void clean();
 
-    void timeout();
+  void timeout();
 
-    /**
-     * 处理一个元素
-     * @param e
-     * @throws Exception
-     */
-    void process(E e) throws Exception;
+  /**
+   * 处理一个元素
+   */
+  void process(E e) throws Exception;
 
-    /**
-     * 填充队列
-     */
-    void fillQueue();
+  /**
+   * 填充队列
+   */
+  void fillQueue();
 
-    void fillQueue(E e);
+  void fillQueue(E e);
 
-    void fillQueue(List<E> elemList);
+  void fillQueue(List<E> elemList);
 
-    /**
-     *处理非阻塞队列的钩子
-     */
-    void pollNull();
+  /**
+   * 处理非阻塞队列的钩子
+   */
+  void pollNull();
 }

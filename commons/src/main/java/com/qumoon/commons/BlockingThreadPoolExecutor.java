@@ -26,59 +26,59 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingThreadPoolExecutor extends ThreadPoolExecutor {
 
-    private Semaphore semaphore;
+  private Semaphore semaphore;
 
-    public BlockingThreadPoolExecutor(int bound) {
-        super(bound, bound, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(bound));
-        this.semaphore = new Semaphore(bound);
+  public BlockingThreadPoolExecutor(int bound) {
+    super(bound, bound, 0L, TimeUnit.MILLISECONDS,
+          new LinkedBlockingQueue<Runnable>(bound));
+    this.semaphore = new Semaphore(bound);
+  }
+
+  @Override
+  public void execute(Runnable task) {
+    boolean acquired = false;
+    do {
+      try {
+        semaphore.acquire();
+        acquired = true;
+      } catch (InterruptedException e) {
+        // wait forever!
+      }
+    } while (!acquired);
+
+    try {
+      super.execute(task);
+    } catch (RuntimeException e) {
+      // specifically, handle RejectedExecutionException
+      semaphore.release();
+      throw e;
+    } catch (Error e) {
+      semaphore.release();
+      throw e;
     }
+  }
 
-    @Override
-    public void execute(Runnable task) {
-        boolean acquired = false;
-        do {
-            try {
-                semaphore.acquire();
-                acquired = true;
-            } catch (InterruptedException e) {
-                // wait forever!
-            }
-        } while (!acquired);
+  @Override
+  protected void afterExecute(Runnable r, Throwable t) {
+    semaphore.release();
+  }
 
-        try {
-            super.execute(task);
-        } catch (RuntimeException e) {
-            // specifically, handle RejectedExecutionException
-            semaphore.release();
-            throw e;
-        } catch (Error e) {
-            semaphore.release();
-            throw e;
+
+  public static void main(String[] args) {
+    ThreadPoolExecutor executor = new BlockingThreadPoolExecutor(2);
+    while (true) {
+      executor.submit(new Runnable() {
+        @Override
+        public void run() {
+          System.out.println("bingo");
+          try {
+            Thread.sleep(1000 * 5);
+          } catch (InterruptedException e) {
+
+          }
         }
+      });
+      System.out.println("latch");
     }
-
-    @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        semaphore.release();
-    }
-
-
-    public static void main(String[] args){
-        ThreadPoolExecutor executor= new BlockingThreadPoolExecutor(2);
-        while(true){
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("bingo");
-                    try {
-                        Thread.sleep(1000 * 5);
-                    } catch (InterruptedException e) {
-
-                    }
-                }
-            }) ;
-            System.out.println("latch");
-        }
-    }
+  }
 }

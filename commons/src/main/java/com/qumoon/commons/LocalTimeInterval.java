@@ -10,70 +10,71 @@ import org.joda.time.LocalTime;
  * @author kevin
  */
 public class LocalTimeInterval implements Comparable<LocalTimeInterval> {
-    private static final Instant CONSTANT = new Instant(0);
-    private final LocalTime from;
-    private final LocalTime to;
 
-    public LocalTimeInterval(LocalTime from, LocalTime to) {
-        this.from = from;
-        this.to = to;
-    }
+  private static final Instant CONSTANT = new Instant(0);
+  private final LocalTime from;
+  private final LocalTime to;
 
-    public LocalTimeInterval(int fromHour, int toHour) {
-        this(new LocalTime(fromHour, 0), new LocalTime(toHour, 0));
-    }
+  public LocalTimeInterval(LocalTime from, LocalTime to) {
+    this.from = from;
+    this.to = to;
+  }
 
-    public boolean isValid() {
-        try {
-            return toInterval() != null;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
+  public LocalTimeInterval(int fromHour, int toHour) {
+    this(new LocalTime(fromHour, 0), new LocalTime(toHour, 0));
+  }
 
-    public boolean overlapsWith(LocalTimeInterval localTimeInterval) {
-        return this.toInterval().overlaps(localTimeInterval.toInterval());
+  public boolean isValid() {
+    try {
+      return toInterval() != null;
+    } catch (IllegalArgumentException e) {
+      return false;
     }
+  }
 
-    /**
-     * @return this represented as a proper Interval
-     * @throws IllegalArgumentException if invalid (to is before from)
-     */
-    private Interval toInterval() throws IllegalArgumentException {
-        return new Interval(from.toDateTime(CONSTANT), to.toDateTime(CONSTANT));
-    }
+  public boolean overlapsWith(LocalTimeInterval localTimeInterval) {
+    return this.toInterval().overlaps(localTimeInterval.toInterval());
+  }
 
-    public LocalTime getFrom() {
-        return from;
-    }
+  /**
+   * @return this represented as a proper Interval
+   * @throws IllegalArgumentException if invalid (to is before from)
+   */
+  private Interval toInterval() throws IllegalArgumentException {
+    return new Interval(from.toDateTime(CONSTANT), to.toDateTime(CONSTANT));
+  }
 
-    public LocalTime getTo() {
-        return to;
-    }
+  public LocalTime getFrom() {
+    return from;
+  }
 
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+  public LocalTime getTo() {
+    return to;
+  }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof LocalTimeInterval) {
-            LocalTimeInterval other = (LocalTimeInterval) obj;
-            if (this.from.equals(other.getFrom()) && this.to.equals(other.getTo())) {
-                return true;
-            }
-        }
-        return false;
-    }
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj instanceof LocalTimeInterval) {
+      LocalTimeInterval other = (LocalTimeInterval) obj;
+      if (this.from.equals(other.getFrom()) && this.to.equals(other.getTo())) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-    @Override
-    public int compareTo(LocalTimeInterval o) {
-        return this.from.compareTo(o.getFrom());
-    }
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
+
+  @Override
+  public int compareTo(LocalTimeInterval o) {
+    return this.from.compareTo(o.getFrom());
+  }
 }

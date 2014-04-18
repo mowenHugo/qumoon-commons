@@ -6,25 +6,27 @@ import java.io.Serializable;
 
 /**
  * master 节点
+ *
  * @author kevin
  */
 public class Master implements Serializable {
-    private String master;
-    private DateTime createTime;
 
-    public String getMaster() {
-        return master;
-    }
+  private String master;
+  private DateTime createTime;
 
-    public void setMaster(String master) {
-        this.master = master;
-    }
+  public String getMaster() {
+    return master;
+  }
 
-    public DateTime getCreateTime() {
-        return createTime;
-    }
+  public void setMaster(String master) {
+    this.master = master;
+  }
 
-    public void setCreateTime(DateTime createTime) {
-        this.createTime = createTime;
-    }
+  public DateTime getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(DateTime createTime) {
+    this.createTime = createTime;
+  }
 }

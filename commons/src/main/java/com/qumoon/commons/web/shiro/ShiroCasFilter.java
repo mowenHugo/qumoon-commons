@@ -10,25 +10,26 @@ import javax.servlet.http.HttpServletRequest;
  * @author kevin
  */
 public class ShiroCasFilter extends AuthenticationFilter {
-    private String casPath;
 
-    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String realServletPath = httpRequest.getServletPath();
-        if (null != realServletPath && realServletPath.equals(casPath)) {
-            return true;
-        } else {
-            WebUtils2.saveTargetUrl(request);
-            redirectToLogin(request, response);
-            return false;
-        }
-    }
+  private String casPath;
 
-    public String getCasPath() {
-        return casPath;
+  protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    String realServletPath = httpRequest.getServletPath();
+    if (null != realServletPath && realServletPath.equals(casPath)) {
+      return true;
+    } else {
+      WebUtils2.saveTargetUrl(request);
+      redirectToLogin(request, response);
+      return false;
     }
+  }
 
-    public void setCasPath(String casPath) {
-        this.casPath = casPath;
-    }
+  public String getCasPath() {
+    return casPath;
+  }
+
+  public void setCasPath(String casPath) {
+    this.casPath = casPath;
+  }
 }

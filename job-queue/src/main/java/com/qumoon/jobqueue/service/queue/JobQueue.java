@@ -6,11 +6,12 @@ import java.util.List;
  * @author kevin
  */
 public interface JobQueue<T> {
-    void start();
 
-    T getJob(String tag);
+  void start();
 
-    void addJob(String tag, T job);
+  T getJob(String tag);
 
-    void addJobs(String tag, List<T> jobs);
+  void addJob(String tag, T job);
+
+  void addJobs(String tag, List<T> jobs);
 }
