@@ -8,6 +8,10 @@ import org.springframework.beans.factory.FactoryBean;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+@Deprecated
+/**
+ * use spring data redis instead
+ */
 public class JedisPoolFactoryBean implements FactoryBean<JedisPool> {
 
   private static Logger logger = LoggerFactory.getLogger(JedisPoolFactoryBean.class);

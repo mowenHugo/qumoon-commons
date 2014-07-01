@@ -9,6 +9,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
+@Deprecated
+/**
+ * @deprecated use spring data redis instead
+ */
 public class JedisUtils {
 
   public static final Logger logger = Logger.getLogger(JedisUtils.class.getSimpleName());

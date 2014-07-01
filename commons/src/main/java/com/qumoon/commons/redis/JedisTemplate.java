@@ -12,9 +12,12 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
 
+@Deprecated
 /**
  * JedisTemplate 提供了一个template方法，负责对Jedis连接的获取与归还。 JedisAction<T> 和 JedisActionNoResult两种回调接口，适用于有无返回值两种情况。
  * 同时提供一些最常用函数的封装, 如get/set/zadd等。
+ *
+ * @deprecated use spring data redis instead
  */
 public class JedisTemplate {
 
@@ -108,26 +111,6 @@ public class JedisTemplate {
   }
 
   /**
-   * 有返回结果的回调接口定义。
-   */
-  public interface JedisAction<T> {
-
-    T action(Jedis jedis);
-  }
-
-  /**
-   * 无返回结果的回调接口定义。
-   */
-  public interface JedisActionNoResult {
-
-    void action(Jedis jedis);
-  }
-
-  // ////////////// 常用方法的封装 ///////////////////////// //
-
-  // ////////////// 公共 ///////////////////////////
-
-  /**
    * 删除key, 如果key存在返回true, 否则返回false。
    */
   public boolean del(final String key) {
@@ -150,6 +133,10 @@ public class JedisTemplate {
     });
   }
 
+  // ////////////// 常用方法的封装 ///////////////////////// //
+
+  // ////////////// 公共 ///////////////////////////
+
   public void flushDB() {
     execute(new JedisActionNoResult() {
 
@@ -159,8 +146,6 @@ public class JedisTemplate {
       }
     });
   }
-
-  // ////////////// 关于String ///////////////////////////
 
   /**
    * 如果key不存在, 返回null.
@@ -185,6 +170,8 @@ public class JedisTemplate {
     });
   }
 
+  // ////////////// 关于String ///////////////////////////
+
   public <T> T getAndSetObj(final String key, final T t, final int seconds) {
     return execute(new JedisAction<T>() {
       @Override
@@ -201,7 +188,6 @@ public class JedisTemplate {
     });
   }
 
-
   public byte[] get(final byte[] key) {
     return execute(new JedisAction<byte[]>() {
 
@@ -211,7 +197,6 @@ public class JedisTemplate {
       }
     });
   }
-
 
   /**
    * 如果key不存在, 返回0.
@@ -342,7 +327,6 @@ public class JedisTemplate {
     });
   }
 
-
   public long incr(final String key) {
     return execute(new JedisAction<Long>() {
 
@@ -362,7 +346,6 @@ public class JedisTemplate {
       }
     });
   }
-
 
   public long decr(final String key) {
     return execute(new JedisAction<Long>() {
@@ -433,8 +416,6 @@ public class JedisTemplate {
     });
   }
 
-  // ////////////// 关于Sorted Set ///////////////////////////
-
   /**
    * 加入Sorted set, 如果member在Set里已存在，只更新score并返回false,否则返回true.
    */
@@ -461,6 +442,8 @@ public class JedisTemplate {
     });
   }
 
+  // ////////////// 关于Sorted Set ///////////////////////////
+
   /**
    * 返回List长度, key不存在时返回0，key类型不是sorted set时抛出异常.
    */
@@ -472,5 +455,21 @@ public class JedisTemplate {
         return jedis.zcard(key);
       }
     });
+  }
+
+  /**
+   * 有返回结果的回调接口定义。
+   */
+  public interface JedisAction<T> {
+
+    T action(Jedis jedis);
+  }
+
+  /**
+   * 无返回结果的回调接口定义。
+   */
+  public interface JedisActionNoResult {
+
+    void action(Jedis jedis);
   }
 }

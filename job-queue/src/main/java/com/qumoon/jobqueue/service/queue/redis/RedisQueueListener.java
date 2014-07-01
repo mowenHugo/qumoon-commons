@@ -3,7 +3,7 @@ package com.qumoon.jobqueue.service.queue.redis;
 /**
  * @author kevin
  */
-public interface PriorityScorable {
+public interface RedisQueueListener<T> {
 
-  double getScore();
+  public void onMessage(T value);
 }

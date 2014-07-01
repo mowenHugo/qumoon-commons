@@ -1,26 +1,27 @@
 package com.qumoon.jobqueue.service.queue.redis;
 
 import com.qumoon.commons.BlockingThreadPoolExecutor;
-import com.qumoon.commons.redis.JedisTemplate;
 import com.qumoon.jobqueue.model.Master;
-import com.qumoon.jobqueue.service.queue.JobQueue;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 使用 redis 作为 job 存储和 master，保证单写多读
  *
  * @author kevin
  */
-public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
+public abstract class AbstractRedisQueue<T> extends RedisQueue<T> {
 
-  private static Logger logger = LoggerFactory.getLogger(AbstractRedisJobQueue.class);
-  protected JedisTemplate jedisTemplate;
+  private static Logger logger = LoggerFactory.getLogger(AbstractRedisQueue.class);
+  protected RedisTemplate redisTemplate;
   //是否是 master
   private boolean isMaster = false;
   private String group;
@@ -29,7 +30,8 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
   private BlockingThreadPoolExecutor checkMasterThread = new BlockingThreadPoolExecutor(1);
 
   @Override
-  public void start() {
+  public void afterPropertiesSet() throws Exception {
+    super.afterPropertiesSet();
     checkMasterThread.submit(new Runnable() {
       @Override
       public void run() {
@@ -62,14 +64,16 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
    */
   public void doCheckMaster() {
     boolean prevMaster = isMaster;
-    Master master = jedisTemplate.getObj(group);
+    BoundValueOperations<String, Master> masterOperations = redisTemplate.boundValueOps(group);
+    Master master = masterOperations.get();
     if (null == master) {
       master = new Master();
       master.setMaster(masterName);
       master.setCreateTime(DateTime.now());
-      jedisTemplate.setex(group.getBytes(), master, expireTime);
-      master = jedisTemplate.getObj(group);
+      masterOperations.set(master, expireTime, TimeUnit.SECONDS);
+      master = masterOperations.get();
     }
+
     if (null == master || null == master.getMaster()) {
       logger.warn("group[{}] has no master.", group);
       isMaster = false;
@@ -86,29 +90,17 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
   }
 
   @Override
-  public void addJob(String tag, T job) {
+  public void add(T value) {
     if (isMaster) {
-      doAddJob(tag, job);
+      super.add(value);
     }
   }
-
-  abstract void doAddJob(final String tag, final T job);
 
   @Override
-  public void addJobs(String tag, List<T> jobs) {
+  public void addAll(List<T> values) {
     if (isMaster) {
-      doAddJobs(tag, jobs);
+      super.addAll(values);
     }
-  }
-
-  abstract void doAddJobs(final String tag, List<T> jobs);
-
-  public String getGroup() {
-    return group;
-  }
-
-  public void setGroup(String group) {
-    this.group = group;
   }
 
   public boolean isMaster() {
@@ -125,14 +117,6 @@ public abstract class AbstractRedisJobQueue<T> implements JobQueue<T> {
 
   public void setMasterName(String masterName) {
     this.masterName = masterName;
-  }
-
-  public JedisTemplate getJedisTemplate() {
-    return jedisTemplate;
-  }
-
-  public void setJedisTemplate(JedisTemplate jedisTemplate) {
-    this.jedisTemplate = jedisTemplate;
   }
 
   public int getExpireTime() {

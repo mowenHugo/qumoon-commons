@@ -3,7 +3,7 @@ package com.qumoon.jobqueue.service;
 import com.google.common.collect.Maps;
 
 import com.qumoon.commons.BlockingThreadPoolExecutor;
-import com.qumoon.jobqueue.service.queue.JobQueue;
+import com.qumoon.jobqueue.service.queue.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +22,15 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
   private static Logger logger = LoggerFactory.getLogger(Thread.currentThread().getClass());
   private BlockingThreadPoolExecutor pollWrapThreads = new BlockingThreadPoolExecutor(1);
   private BlockingThreadPoolExecutor pollThreads;
-  private JobQueue<E> jobQueue;
+  private Queue<E> queue;
   private Map<String, ThreadPoolExecutor> threadPoolExecutorMap = Maps.newHashMap();
   private int pollRoundCount = 0;
   private boolean init = true;
-  private String tag;
   private int pollNum = 5;
 
   @Override
   public void start() {
-    checkNotNull("tag can not be null.", tag);
+    checkNotNull("tag can not be null.", queue.getQueueName());
     pollThreads = new BlockingThreadPoolExecutor(pollNum);
     threadPoolExecutorMap.put(getClass().getSimpleName() + "-poll", pollThreads);
 
@@ -80,7 +79,7 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
   public void triggerPoll() {
     while (true) {
       try {
-        final E e = jobQueue.getJob(tag);
+        final E e = queue.take();
         if (null != e) {
           pollThreads.submit(new Runnable() {
             @Override
@@ -103,12 +102,12 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
 
   @Override
   public void fillQueue(E e) {
-    jobQueue.addJob(tag, e);
+    queue.add(e);
   }
 
   @Override
   public void fillQueue(List<E> elemList) {
-    jobQueue.addJobs(tag, elemList);
+    queue.addAll(elemList);
   }
 
   public Map<String, ThreadPoolExecutor> getThreadPoolExecutorMap() {
@@ -127,14 +126,6 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
     this.pollThreads = pollThreads;
   }
 
-  public JobQueue<E> getJobQueue() {
-    return jobQueue;
-  }
-
-  public void setJobQueue(JobQueue<E> jobQueue) {
-    this.jobQueue = jobQueue;
-  }
-
   public int getPollRoundCount() {
     return pollRoundCount;
   }
@@ -151,19 +142,19 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
     this.init = init;
   }
 
-  public String getTag() {
-    return tag;
-  }
-
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
-
   public int getPollNum() {
     return pollNum;
   }
 
   public void setPollNum(int pollNum) {
     this.pollNum = pollNum;
+  }
+
+  public Queue<E> getQueue() {
+    return queue;
+  }
+
+  public void setQueue(Queue<E> queue) {
+    this.queue = queue;
   }
 }
