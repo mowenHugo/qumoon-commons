@@ -14,4 +14,6 @@ public interface JobQueue<T> {
   void addJob(String tag, T job);
 
   void addJobs(String tag, List<T> jobs);
+
+  boolean isMaster();
 }

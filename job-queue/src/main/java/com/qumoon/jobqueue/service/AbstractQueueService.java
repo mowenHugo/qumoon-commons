@@ -61,7 +61,9 @@ public abstract class AbstractQueueService<E> implements QueueService<E> {
 
   protected void triggerAdd() {
     try {
-      fillQueue();
+      if (jobQueue.isMaster()) {
+        fillQueue();
+      }
     } catch (Throwable throwable) {
       logger.error("getAndProcess thread error.", throwable);
     }
